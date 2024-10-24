@@ -1,0 +1,54 @@
+{
+    "compilerOptions": {
+        /* Basic Options */
+        "types": [
+            "node",
+            "express"
+        ],
+        "typeRoots": [
+            "./node_modules/@types"
+        ],
+        "target": "ESNext", // Spécifie la version ECMAScript cible
+        "module": "NodeNext", // Utilise le système de modules Node.js (ESM)
+        "moduleResolution": "NodeNext", // Résolution des modules pour Node.js (nécessaire avec "module": "NodeNext")
+        "esModuleInterop": true, // Permet d'importer des modules CommonJS avec les importations ES6
+        "skipLibCheck": true, // Ignore la vérification des fichiers .d.ts pour améliorer la vitesse de compilation
+        "forceConsistentCasingInFileNames": true, // Enforce un casing cohérent pour les imports
+        /* Strict Type-Checking Options */
+        "strict": true, // Active toutes les vérifications strictes
+        "noImplicitAny": true, // Interdit les types implicites 'any'
+        "strictNullChecks": true, // Vérifie que les valeurs 'null' et 'undefined' sont traitées explicitement
+        "strictPropertyInitialization": true, // S'assure que les propriétés de classe sont initialisées correctement
+        /* Module Resolution Options */
+        "baseUrl": "./", // Base de résolution des modules relatifs
+        "paths": { // Définir des alias pour les imports (facultatif)
+            "@src/*": [
+                "src/*"
+            ],
+            "@utils/*": [
+                "src/utils/*"
+            ]
+        },
+        /* Source Map Options */
+        "sourceMap": true, // Génère les fichiers source maps pour le débogage
+        "rootDir": "./src",
+        "outDir": "./dist", // Répertoire de sortie pour les fichiers compilés
+        /* Experimental Options */
+        "experimentalDecorators": true, // Active les décorateurs pour TypeScript
+        /* Node.js Specific Options */
+        "resolveJsonModule": true, // Permet d'importer des fichiers JSON
+        "allowSyntheticDefaultImports": true, // Permet les importations par défaut synthétiques
+        /* Other Options */
+        "noUnusedLocals": true, // Avertit lorsque des variables locales ne sont pas utilisées
+        "noUnusedParameters": true, // Avertit lorsque des paramètres de fonction ne sont pas utilisés
+        "noFallthroughCasesInSwitch": true // Interdit les cas non traités dans les switch
+    },
+    "include": [
+        "src/**/*"
+    ], // Inclut tous les fichiers TypeScript du répertoire src
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/**/*.test.ts"
+    ] // Exclut le répertoire node_modules et dist
+}

@@ -1,0 +1,100 @@
+# Contributing to **Express-js-Started**
+
+Merci d'envisager de contribuer à **Express-js-Started**! Nous apprécions l'aide de la communauté pour améliorer ce projet de template. Ce document vous guidera à travers le processus de contribution.
+
+## Table des matières
+
+- [Contributing to **Express-js-Started**](#contributing-to-express-js-started)
+  - [Table des matières](#table-des-matières)
+  - [Comment contribuer](#comment-contribuer)
+  - [Règles de conduite](#règles-de-conduite)
+  - [Rapporter un bug](#rapporter-un-bug)
+  - [Proposer une fonctionnalité](#proposer-une-fonctionnalité)
+  - [Envoyer une pull request](#envoyer-une-pull-request)
+  - [Tests](#tests)
+  - [Licence](#licence)
+
+## Comment contribuer
+
+Nous accueillons toutes les contributions, qu'il s'agisse de corrections de bugs, de nouvelles fonctionnalités ou d'améliorations. Pour contribuer à ce projet, voici ce que vous devez faire :
+
+1- **Forker le projet** : Cliquez sur le bouton "Fork" en haut à droite du projet sur GitHub pour créer une copie de ce projet dans votre propre compte.
+2- **Cloner le projet** : Clonez votre fork sur votre machine locale.
+
+```bash
+git clone git@github.com:01Barthez/Express-js-Started.git
+cd Express-js-Started
+```
+
+3- **Créer une branche** : Créez une branche pour votre modification. Par exemple, pour ajouter une fonctionnalité ou corriger un bug :
+
+```bash
+git checkout -b ma-nouvelle-fonctionnalité
+```
+
+4- **Effectuer vos changements** : Apportez les modifications nécessaires.
+5- **Committez vos changements** : Faites un commit avec un message clair expliquant ce que vous avez fait.
+
+```bash
+git add .
+git commit -m "Ajout de la fonctionnalité X"
+```
+
+6- **Pusher vos changements** : Poussez vos modifications vers votre fork sur GitHub.
+
+```bash
+git push origin ma-nouvelle-fonctionnalité
+```
+
+7- **Créer une pull request** : Allez dans le dépôt principal et créez une pull request de votre branche vers la branche main ou develop du projet original. Décrivez brièvement vos modifications.
+
+## Règles de conduite
+
+Lorsque vous contribuez à ce projet, veuillez respecter ces règles de conduite :
+
+- Respect : Traitez les autres contributeurs avec respect et courtoisie.
+-Communication claire : Expliquez clairement vos idées et les changements que vous proposez.
+- Collaboration : Soyez ouvert aux suggestions et aux retours constructifs des autres contributeurs.
+- Respect des lignes directrices du projet : Veuillez respecter le style de code et les conventions de ce projet.
+
+## Rapporter un bug
+
+Si vous rencontrez un bug, veuillez ouvrir une issue et inclure les informations suivantes :
+
+- Description détaillée du bug
+- Étapes pour reproduire le bug
+- Résultat attendu
+- Résultat réel
+- Capture d'écran ou logs (si possible)
+
+## Proposer une fonctionnalité
+
+Si vous avez une idée de fonctionnalité que vous aimeriez ajouter au projet, veuillez ouvrir une issue avec la balise *enhancement*. Décrivez l'idée, pourquoi elle serait utile, et comment vous pensez qu'elle pourrait être implémentée.
+
+## Envoyer une pull request
+
+Nous apprécions toutes les contributions! Pour envoyer une pull request, suivez ces étapes :
+
+- Forkez ce dépôt.
+- Clonez le fork sur votre machine locale.
+- Créez une branche dédiée pour vos modifications.
+- Assurez-vous que le code suit le style et les pratiques du projet.
+- Ajoutez des tests si nécessaire.
+- Soumettez une pull request en expliquant clairement ce que vous avez fait.
+
+## Tests
+
+Assurez-vous que votre code fonctionne correctement en exécutant les tests. Si vous n'avez pas encore écrit de tests pour vos modifications, merci d'en ajouter.
+
+```bash
+npm run test
+```
+
+## Licence
+
+Ce projet est sous la licence MIT. Consultez le fichier LICENSE pour plus de détails.
+
+- ****Express-js-Started****
+- **[Bartez Kenwou](https://github.com/01Barthez)**
+- **Nom de la licence** : MIT
+  

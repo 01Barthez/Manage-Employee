@@ -1,0 +1,26 @@
+
+services:
+  app:
+    build: .
+    image: test-template:latest
+    ports:
+      - '4000:3000'
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/app
+    depends_on:
+      - mongo # Change it to "postgres" depent of the using database
+    command: ["yarn", "dev"]
+
+  mongo:
+    image: mongo:6.0.1 # using image "postgres:15" depent of database
+    ports:
+      - '27017:27017' # '5432:5432'
+    env_file:
+      - ./.env 
+    volumes:
+      - mongo-data:/data/db # 'postgres-data:/var/lib/postgresql/data'
+
+volumes:
+  mongo-data: # postgres-data
