@@ -10,15 +10,16 @@
 bin/
 build/
 dist/
-keys/
+keys/*
 
 # Ignore package manager directories
 node_modules/
 vendor/
 
 # Ignore log files
-*.log
-*.logs
+*.log/
+*.logs/
+logs/
 
 # Ignore temporary files
 *.tmp
@@ -32,3 +33,5 @@ upload/
 # Ignore Extensions
 *.vscode
 *.github
+
+.env
