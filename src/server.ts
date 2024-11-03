@@ -12,6 +12,8 @@ import disableLogsInProduction from './middleware/disableLog';
 import log from './core/config/logger';
 import user from './routes/users-route';
 import deleteInvalidUser from './services/jobs/deleteUnverifiedUsers';
+import abscence from './routes/abscences-route';
+import attendance from './routes/attendances-route';
 
 const app = express();
 
@@ -60,13 +62,22 @@ app.use(
 );
 
 app.use(
-	"/objet",
+	"/attendance",
 	rateLimit({
 		max: envs.MAX_UNIQ_QUERY_NUMBER,
 		windowMs: envs.MAX_UNIQ_QUERY_WINDOW,
 		message: "Trop de requete à partir de cette addresse IP sur ce endPoint !"
 	}),
-	// objet
+	attendance
+);
+
+app.use(
+	rateLimit({
+		max: envs.MAX_UNIQ_QUERY_NUMBER,
+		windowMs: envs.MAX_UNIQ_QUERY_WINDOW,
+		message: "Trop de requete à partir de cette addresse IP sur ce endPoint !"
+	}),
+	abscence
 );
 
 // All the jobs here

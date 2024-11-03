@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock ./
 
-RUN yarn install && apt-get install -y bash
+RUN yarn install && apk add --no-cache bash
 
 COPY . .
 

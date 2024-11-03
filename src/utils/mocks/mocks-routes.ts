@@ -1,5 +1,4 @@
 const ROUTES = {
-    // After the root employee
     USER: {
         INSCRIPTION: '/signup',
         CONNEXION: '/login',
@@ -15,15 +14,14 @@ const ROUTES = {
     },
     
     ATTENDANCES: {
-        // After the root item/
         CHECK_IN:  '/check-in',
         CHECK_OUT:  '/check-out',
-        GET_ATTENANCES: '/',
+        GET_ATTENANCES: '/:employeeID',
     },
     
     ABSCENCES: {
-        GET_ABSCENCES: '/attendance/absences',
-        GET_SALARY: '/salary'
+        GET_ABSCENCES: '/attendance/absences/:employeeID',
+        GET_SALARY: '/salary/:employeeID'
     }
 }
 

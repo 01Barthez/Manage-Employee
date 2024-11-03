@@ -37,7 +37,7 @@ const abscencesControllers = {
         }
     },
 
-    abscencesAdjustments: async (req: Request, res: Response) => {
+        abscencesAdjustments: async (req: Request, res: Response) => {
         try {
             const { employeeID } = req.params
             if (!employeeID) {
@@ -66,7 +66,7 @@ const abscencesControllers = {
             // Amount Reduction
             const reduction = hoursSalary * totalHours;
             log.debug(`Montant de reduction: ${reduction}`);
-            const newSalary = parseFloat((employeeSalary - reduction).toFixed(2));
+            const newSalary = Math.round((employeeSalary - reduction) /  50) * 50;
             log.debug(`Nouveau salaire: ${newSalary}`);
 
             // Return success message
