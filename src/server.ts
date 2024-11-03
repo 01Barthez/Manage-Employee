@@ -11,7 +11,6 @@ import { envs } from './core/config/env';
 import disableLogsInProduction from './middleware/disableLog';
 import log from './core/config/logger';
 import user from './routes/users-route';
-import objet from './routes/objet-route';
 import deleteInvalidUser from './services/jobs/deleteUnverifiedUsers';
 
 const app = express();
@@ -52,7 +51,7 @@ app.use(morgan(morganFormatRes, {
 
 // program routes
 app.use(
-	"/user",
+	"/employees",
 	rateLimit({
 		max: envs.MAX_UNIQ_QUERY_NUMBER,
 		windowMs: envs.MAX_UNIQ_QUERY_WINDOW,
@@ -68,7 +67,7 @@ app.use(
 		windowMs: envs.MAX_UNIQ_QUERY_WINDOW,
 		message: "Trop de requete à partir de cette addresse IP sur ce endPoint !"
 	}),
-	objet
+	// objet
 );
 
 // All the jobs here

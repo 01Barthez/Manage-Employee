@@ -14,3 +14,10 @@ export enum HttpCode {
     INTERNAL_SERVER_ERROR = 500,
     SERVICE_UNAVAILABLE = 503
 }
+
+export const allowedExtensionsProfile = ['.jpg', '.png', '.jpeg', '.svg', '.gif'];
+
+export const MAX_BEGIN_HOURS = 8
+export const MAX_END_HOURS = 20
+
+export const HOURS_OF_WORKS = 8

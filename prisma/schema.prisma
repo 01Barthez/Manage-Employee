@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -13,24 +14,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  user_id  String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String  @unique
-  password String
+model Employee {
+  employee_id String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String @unique
+  password    String
+
   otp      Otp?
   verified Boolean @default(false)
+
+  post   String
+  salary Int
+
+  //each user can have one or many attendances
+  attendances Attendance[]
+
+  //each user can have one or many absences
+  absences Absence[]
 
   role RoleUser @default(user)
 }
 
-model Objet {
-  objet_id  String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  slug     String  @unique
-  content   String
-  createdAt DateTime @default(now())
-  updatedat DateTime @updatedAt
+model Attendance {
+  attendance_id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationship between the employee and his attendance 
+  employee   Employee @relation(fields: [employeeID], references: [employee_id])
+  employeeID String   @db.ObjectId
+
+  date DateTime @default(now())
+
+  startTime DateTime
+  endTime   DateTime?
+}
+
+model Absence {
+  absence_id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationship between the employee and his attendance 
+  employee   Employee @relation(fields: [employeeID], references: [employee_id])
+  employeeID String   @db.ObjectId
+
+  date         DateTime @default(now())
+  absenceHours Int      @default(1)
 }
 
 type Otp {

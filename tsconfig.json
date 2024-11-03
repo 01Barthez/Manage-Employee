@@ -16,7 +16,7 @@
         "forceConsistentCasingInFileNames": true, // Enforce un casing cohérent pour les imports
         /* Strict Type-Checking Options */
         "strict": true, // Active toutes les vérifications strictes
-        "noImplicitAny": true, // Interdit les types implicites 'any'
+        "noImplicitAny": false, // Interdit les types implicites 'any'
         "strictNullChecks": true, // Vérifie que les valeurs 'null' et 'undefined' sont traitées explicitement
         "strictPropertyInitialization": true, // S'assure que les propriétés de classe sont initialisées correctement
         /* Module Resolution Options */

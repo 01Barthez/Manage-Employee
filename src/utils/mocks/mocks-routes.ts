@@ -4,7 +4,8 @@ const ROUTES = {
         INSCRIPTION: '/signup',
         CONNEXION: '/login',
         DECONNEXION: '/logout',
-        GET_USER: '/profile/:userID',
+        GET_USER: '/profile/:employeeID',
+        GET_ALL_USER: '/profiles',
         UPDATE_USER: '/profile',
         DELETE_USER: '/profile',
         RESEND_OTP: '/resend-otp',
@@ -13,19 +14,16 @@ const ROUTES = {
         CHANGE_PASSSWORD: "/profile/config"
     },
     
-    OBJET: {
+    ATTENDANCES: {
         // After the root item/
-        CREATE_ONE_objet: '/',
-        CREATE_MANY_objet: '/',
-        GET_ONE_objet: '/:objetID',
-        GET_MANY_objet: '/',
-        UPDATE_objet: '/:objetID',
-        DELETE_ONE_objet: '/:objetID',
-        DELETE_MANY_objet: '/',
+        CHECK_IN:  '/check-in',
+        CHECK_OUT:  '/check-out',
+        GET_ATTENANCES: '/',
     },
     
-    UPLOAD: {
-        UPLOAD: '/upload',
+    ABSCENCES: {
+        GET_ABSCENCES: '/attendance/absences',
+        GET_SALARY: '/salary'
     }
 }
 

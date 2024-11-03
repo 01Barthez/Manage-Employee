@@ -23,7 +23,7 @@ const authUser = async (req: customRequest, res: Response, next: NextFunction): 
                 // Vérifier le token d'access reçu
                 const userData = userToken.verifyAccessToken(accessToken);
                 if (userData) {
-                    req.user = userData;
+                    req.employee = userData;
                     return next();
                 }
             } catch (error) {
@@ -79,7 +79,7 @@ const authUser = async (req: customRequest, res: Response, next: NextFunction): 
             return exceptions.unauthorized(res, "Failed to decode the new access token.");
         }
 
-        req.user = newUserData;
+        req.employee = newUserData;
         return next();
     } catch (error) {
         log.error(error);

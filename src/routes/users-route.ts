@@ -1,25 +1,27 @@
 import usersControllers from '@src/controllers/users-controllers';
 import authUser from '@src/middleware/authUser';
+import roleEmployee from '@src/middleware/roleUser';
 // import upload from "@src/middleware/upload-file";
 import { validate, validator } from '@src/services/validator/validator';
 import ROUTES from '@src/utils/mocks/mocks-routes';
 import { Router } from 'express';
+import { RoleUser } from "../core/interfaces/interfaces";
 
-const user: Router = Router();
+const employee: Router = Router();
 
-//? Inscription of new user
+//? Inscription of new employee
 
-user.post(
+employee.post(
     ROUTES.USER.INSCRIPTION,
-    validator.validateUser,
+    validator.validateEmployee,
     validate,
-    // upload.single('image'),
+    // upload.single('profile'),
     usersControllers.inscription
 );
 
 //? Connexion of user
 
-user.post(
+employee.post(
     ROUTES.USER.CONNEXION,
     validator.validateEmail,
     validate,
@@ -27,40 +29,44 @@ user.post(
 );
 
 //? Deconnexion of user
-
-user.post(
+employee.post(
     ROUTES.USER.DECONNEXION,
     authUser,
     usersControllers.deconnexion
 );
 
-//? consultation of user
-
-user.get(
+//? consultation of all users
+employee.get(
     ROUTES.USER.GET_USER,
-    usersControllers.consultuser
+    usersControllers.consulteEmployee
+);
+
+//? consultation of all employees
+employee.get(
+    ROUTES.USER.GET_ALL_USER,
+    usersControllers.consulteAllEmployees
 );
 
 //? update user
-
-user.put(
+employee.put(
     ROUTES.USER.UPDATE_USER,
     authUser,
     // validator.validateUser,
     // validate,
     // upload.single('image'),
-    usersControllers.updateUserData
+    usersControllers.updateEmployeeData
 );
 
 //? Delete user
-user.delete(
+employee.delete(
     ROUTES.USER.DELETE_USER,
     authUser,
-    usersControllers.deleteUser
+    roleEmployee(RoleUser.admin),
+    usersControllers.deleteEmployee
 );
 
 //? changepassword
-user.put(
+employee.put(
     ROUTES.USER.CHANGE_PASSSWORD,
     authUser,
     validator.validatePWDs,
@@ -69,7 +75,7 @@ user.put(
 );
 
 //? reset password
-user.put(
+employee.put(
     ROUTES.USER.RESET_PASSSWORD,
     validator.validatenewPWD,
     validate,
@@ -77,7 +83,7 @@ user.put(
 );
 
 //? verifyOTP
-user.put(
+employee.put(
     ROUTES.USER.VERIFY_OTP,
     validator.validateOTP,
     validate,
@@ -85,11 +91,11 @@ user.put(
 );
 
 //? resendOTP
-user.get(
+employee.get(
     ROUTES.USER.RESEND_OTP,
-    validator.validateEmail,
+    validator.validateEmployeeEmail,
     validate,
     usersControllers.resendOTP
 );
 
-export default user;
+export default employee;

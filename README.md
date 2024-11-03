@@ -1,3 +1,3 @@
-# Express-js-Started
+# Gestion de la présence et des ascences des employés
 
-Ce projet est un template de démarrage pour des applications backend développées avec Express.js et TypeScript. Il est conçu pour simplifier le démarrage rapide de nouveaux projets en intégrant un ensemble d'outils essentiels pour le développement professionnel
+L'entreprise WORKETYAMO a remarqué une perte significative de productivité et une augmentation des coups liées qux heures d'abscences non justifiés des employés. Pour remedier à cette situation, la direction souhaite mettre en place un systeme automatisé pour suivre la présence des employés, calculé les heures d'abscences et ajusté les salaires. 

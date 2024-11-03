@@ -2,29 +2,72 @@ import { Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
 import { HttpCode } from "../../core/constant";
 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
+// const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
+export const passwordRegex: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
 
 export const validator = {
-    validateUser: [
+    validateEmployee: [
         // Validation of user name
         body('name')
-            .exists().withMessage('Le nom est requis !')
+            .exists().withMessage('Le nom de l\'employee est requis !')
             .trim().notEmpty().withMessage('le nom ne doit pas etre vide !')
             .isString().withMessage('le nom doit etre une chaine de caractere !')
             .isLength({ min: 3 }).withMessage('le nom est trop court !')
-            .isLength({ max: 50 }).withMessage('le nom est trop long !')
+            .isLength({ max: 60 }).withMessage('le nom est trop long !')
+            .escape()
         ,
+
         // Validatoion of user email
         body('email')
             .exists().withMessage('L\'email est requis !')
             .trim().notEmpty().withMessage('l\'email ne doit pas etre vide !')
             .isEmail().withMessage('Addresse email invailde !')
+            .escape()
         ,
+
         // validation of user password
         body('password')
             .exists().withMessage('Le mot de passe est requis !')
             .trim().notEmpty().withMessage('mot de passe ne peut etre vide!')
             .matches(passwordRegex).withMessage('mot de passe trop faible !')
+        ,
+
+        body('post')
+            .exists().withMessage('post is required !')
+            .trim().notEmpty().withMessage('post cannot be empty !')
+            .isString().withMessage('post should have a string !')
+            .isLength({ min: 2 }).withMessage('post is too short !')
+            .isLength({ max: 25 }).withMessage('post is too long !')
+            .escape()
+        ,
+        
+        body('salary')
+            .exists().withMessage('salary is required !')
+            .trim().notEmpty().withMessage('salary cannot be empty !')
+            .isInt({ min: 1000, max: 100000000 }).withMessage('invalid salary !')
+            .escape()
+        ,
+    ],
+
+    validateEmail: [
+        // Validatoion of user email
+        body('email')
+            .exists().withMessage('L\'email est requis !')
+            .isEmail().withMessage('Addresse email invailde !')
+            .escape()
+        ,
+        // validation of user password
+        body('password')
+            .exists().withMessage('Veillez entrer un mot de passe !').escape()
+        ,
+    ],
+
+    validateEmployeeEmail: [
+        // Validatoion of user email
+        body('email')
+            .exists().withMessage('L\'email est requis !')
+            .isEmail().withMessage('Addresse email invailde !')
+            .escape()
         ,
     ],
 
@@ -41,6 +84,7 @@ export const validator = {
             .optional()
             .exists().withMessage('L\'email est requis !')
             .isEmail().withMessage('Addresse email invailde !')
+            .escape()
         ,
     ],
     validatenewPWD: [
@@ -48,6 +92,7 @@ export const validator = {
         body('email')
             .exists().withMessage('L\'email est requis !')
             .isEmail().withMessage('Addresse email invailde !')
+            .escape()
         ,
 
         // validation of user password
@@ -62,6 +107,7 @@ export const validator = {
         body('email')
             .exists().withMessage('L\'email est requis !')
             .isEmail().withMessage('Addresse email invailde !')
+            .escape()
         ,
 
         // validation of user password
@@ -78,39 +124,19 @@ export const validator = {
 
     ],
 
-    validateEmail: [
-        // Validatoion of user email
-        body('email')
-            .exists().withMessage('L\'email est requis !')
-            .isEmail().withMessage('Addresse email invailde !')
-        ,
-    ],
-
     validateOTP: [
         // Validatoion of user email
         body('email')
             .exists().withMessage('L\'email est requis !')
             .isEmail().withMessage('Addresse email invailde !')
+            .escape()
         ,
 
         // Validation de l'otp
         body("otp")
             .exists().withMessage("Code OTP requis")
             .isLength({ min: 6, max: 6 }).withMessage("le code otp doit avoir 6 caracteres")
-    ],
-
-    validateobjet: [
-        body('title')
-            .exists().withMessage('title is required !')
-            .isLength({ min: 3 }).withMessage('le titre n\'est pas assez long !')
-            .isLength({ max: 300 }).withMessage('le titre est trop long !')
-            .isString().withMessage('title should be a string !')
-        ,
-        body('description')
-            .exists().withMessage('content is required !')
-            .isLength({ min: 3 }).withMessage('le contenu n\'est pas assez long !')
-            .isString().withMessage('content should be a string !')
-        ,
+            .escape(),
     ],
 }
 
