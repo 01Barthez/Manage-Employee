@@ -9,20 +9,21 @@ import log from "@src/core/config/logger";
 const authUser = async (req: customRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const authHeader = req.headers['authorization'];
-        // log.debug(`authHeader extracted: ${authHeader}`);
+        log.debug(`authHeader extracted: ${authHeader}`);
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             log.error("Authorization header is malformed !");
             return exceptions.unauthorized(res, "Malformed token.");
         }
-        const accessToken = authHeader.replace('Bearer Bearer', 'Bearer').split(" ")[1] || ""; // Because we often have two Bearer world...
-        // log.debug(`Token extracted: ${accessToken}`);
+        const accessToken = authHeader.replace('Bearer Bearer', 'Bearer').split(" ")[1] || ""; // Because i don't know qhy but we often have two Bearer world...
+        log.debug(`Token extracted: ${accessToken}`);
 
         if (accessToken) {
             try {
                 // Vérifier le token d'access reçu
                 const userData = userToken.verifyAccessToken(accessToken);
                 if (userData) {
+                    log.info("access token exist et vérifié avec succès...")
                     req.employee = userData;
                     return next();
                 }

@@ -40,13 +40,20 @@ export const validator = {
             .isLength({ max: 25 }).withMessage('post is too long !')
             .escape()
         ,
-        
+
         body('salary')
             .exists().withMessage('salary is required !')
             .trim().notEmpty().withMessage('salary cannot be empty !')
             .isInt({ min: 1000, max: 100000000 }).withMessage('invalid salary !')
             .escape()
         ,
+
+        body('role')
+            .optional()
+            .isString().withMessage('role should have a string !')
+            .isLength({ min: 3 }).withMessage('role is too short !')
+            .isLength({ max: 50 }).withMessage('role is too long !')
+            .escape()
     ],
 
     validateEmail: [
@@ -82,11 +89,32 @@ export const validator = {
         // Validatoion of user email
         body('email')
             .optional()
-            .exists().withMessage('L\'email est requis !')
             .isEmail().withMessage('Addresse email invailde !')
             .escape()
         ,
+
+        body('post')
+            .optional()
+            .isString().withMessage('post should have a string !')
+            .isLength({ min: 2 }).withMessage('post is too short !')
+            .isLength({ max: 25 }).withMessage('post is too long !')
+            .escape()
+        ,
+
+        body('salary')
+            .optional()
+            .isInt({ min: 1000, max: 100000000 }).withMessage('invalid salary !')
+            .escape()
+        ,
+
+        body('role')
+            .optional()
+            .isString().withMessage('role should have a string !')
+            .isLength({ min: 3 }).withMessage('role is too short !')
+            .isLength({ max: 50 }).withMessage('role is too long !')
+            .escape()
     ],
+
     validatenewPWD: [
         // Validatoion of user email
         body('email')
@@ -103,13 +131,6 @@ export const validator = {
     ],
 
     validatePWDs: [
-        // Validatoion of user email
-        body('email')
-            .exists().withMessage('L\'email est requis !')
-            .isEmail().withMessage('Addresse email invailde !')
-            .escape()
-        ,
-
         // validation of user password
         body('oldPassword')
             .exists().withMessage('Le mot de passe est requis !')
@@ -117,7 +138,7 @@ export const validator = {
         ,
 
         // validation of user password
-        body('newpassword')
+        body('newPassword')
             .exists().withMessage('Le mot de passe est requis !')
             .matches(passwordRegex).withMessage('mot de passe trop faible !')
         ,

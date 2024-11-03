@@ -4,13 +4,8 @@ import bcrypt from 'bcrypt'
 const hashText = async (plainText: string): Promise<string> => {
     try {
         const getRounds = 10;
-        log.debug("Generating salt...");
         const salt = await bcrypt.genSalt(getRounds);
-        log.debug("Salt generated:", salt);
-        
-        log.debug("Hashing password...");
         const hashPassword = await bcrypt.hash(plainText, salt);
-        log.debug("Password hashed:", hashPassword);
 
         return hashPassword;
     } catch (error) {

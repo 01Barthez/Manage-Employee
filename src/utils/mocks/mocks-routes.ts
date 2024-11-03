@@ -1,17 +1,17 @@
 const ROUTES = {
+    // After the root employee
     USER: {
-        // After the root user/
         INSCRIPTION: '/signup',
         CONNEXION: '/login',
         DECONNEXION: '/logout',
         GET_USER: '/profile/:employeeID',
         GET_ALL_USER: '/profiles',
         UPDATE_USER: '/profile',
-        DELETE_USER: '/profile',
-        RESEND_OTP: '/resend-otp',
-        VERIFY_OTP: '/verify-otp',
+        DELETE_USER: '/profile/:employeeID',
+        CHANGE_PASSSWORD: "/change-password",
         RESET_PASSSWORD: "/reset-password",
-        CHANGE_PASSSWORD: "/profile/config"
+        VERIFY_OTP: '/verify-otp',
+        RESEND_OTP: '/resend-otp',
     },
     
     ATTENDANCES: {

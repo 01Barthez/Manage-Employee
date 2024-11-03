@@ -1,16 +1,13 @@
 import usersControllers from '@src/controllers/users-controllers';
 import authUser from '@src/middleware/authUser';
-import roleEmployee from '@src/middleware/roleUser';
 // import upload from "@src/middleware/upload-file";
 import { validate, validator } from '@src/services/validator/validator';
 import ROUTES from '@src/utils/mocks/mocks-routes';
 import { Router } from 'express';
-import { RoleUser } from "../core/interfaces/interfaces";
 
 const employee: Router = Router();
 
 //? Inscription of new employee
-
 employee.post(
     ROUTES.USER.INSCRIPTION,
     validator.validateEmployee,
@@ -19,8 +16,7 @@ employee.post(
     usersControllers.inscription
 );
 
-//? Connexion of user
-
+//? Connexion of user 
 employee.post(
     ROUTES.USER.CONNEXION,
     validator.validateEmail,
@@ -51,8 +47,8 @@ employee.get(
 employee.put(
     ROUTES.USER.UPDATE_USER,
     authUser,
-    // validator.validateUser,
-    // validate,
+    validator.validateUserUpdate,
+    validate,
     // upload.single('image'),
     usersControllers.updateEmployeeData
 );
@@ -61,7 +57,6 @@ employee.put(
 employee.delete(
     ROUTES.USER.DELETE_USER,
     authUser,
-    roleEmployee(RoleUser.admin),
     usersControllers.deleteEmployee
 );
 

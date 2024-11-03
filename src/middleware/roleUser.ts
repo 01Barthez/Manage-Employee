@@ -9,7 +9,6 @@ const roleEmployee = (role: RoleUser) => {
         req: customRequest,
         res: Response,
         next: NextFunction,
-
     ) => {
         try {
             // fetch employeID from authentification

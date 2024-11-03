@@ -47,7 +47,6 @@ app.use(morgan(morganFormatRes, {
 		write: (message) => log.http(message.trim()) // Redirige les logs HTTP vers Winston
 	}
 }));
-// app.use(morgan('combined'));
 
 // program routes
 app.use(

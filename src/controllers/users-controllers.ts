@@ -2,7 +2,7 @@ import { envs } from "@src/core/config/env";
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
-import { customRequest } from "@src/core/interfaces/interfaces";
+import { customRequest, RoleUser } from "@src/core/interfaces/interfaces";
 import { comparePassword, hashText } from "@src/functions/crypt-password";
 import generateSimpleOTP from "@src/functions/generate-otp";
 import employeeToken from "@src/services/jwt/jwt-functions";
@@ -11,7 +11,7 @@ import exceptions from "@src/utils/errors/exceptions";
 import { Request, Response } from "express";
 
 const employeesControllers = {
-    // function for inscription of employee
+    // function for inscription of employee //!OK
     inscription: async (req: Request, res: Response) => {
         try {
             // fetch data from body to create new employee
@@ -40,7 +40,7 @@ const employeesControllers = {
 
             const otp = generateSimpleOTP();
             const now = new Date();
-            const expireOTP = new Date(now.getTime() + 10 * 60)
+            const expireOTP = new Date(now.getTime() + 10 * 60 * 1000)
             log.info("code OTP généré...")
 
             const newemployee = await prisma.employee.create({
@@ -52,7 +52,7 @@ const employeesControllers = {
                         code: otp,
                         expire_at: expireOTP
                     },
-                    post, 
+                    post,
                     salary: parseInt(salary),
                     role
                 }
@@ -210,7 +210,7 @@ const employeesControllers = {
             const infoemployee = {
                 name: employee.name,
                 email: employee.email,
-                post: employee.post, 
+                post: employee.post,
                 salary: employee.salary
             }
 
@@ -270,10 +270,20 @@ const employeesControllers = {
             log.info("employee exist...");
 
             // fetch data from body
-            const { name, email, post, salary } = req.body;
-            if (!name && !email && !salary) {
-                log.warn("you have to enter field to update !");
-                return exceptions.badRequest(res, "All fields are mandatory !");
+            const { name, email, post, salary, role } = req.body;
+            const updateData: any = {}; // Create an object to hold the fields to update
+
+            // Add fields to updateData only if they are provided
+            if (name) updateData.name = name;
+            if (email) updateData.email = email;
+            if (post) updateData.post = post;
+            if (salary) updateData.salary = parseInt(salary);
+            if (role) updateData.role = role;
+
+            // If no fields are provided, return a bad request error
+            if (Object.keys(updateData).length === 0) {
+                log.warn("No fields provided to update !");
+                return exceptions.badRequest(res, "At least one field is required to update !");
             }
             log.info("Information(s) entrées...");
 
@@ -294,7 +304,7 @@ const employeesControllers = {
             // Update employee
             const updateemployee = await prisma.employee.update({
                 where: { employee_id: employeeID },
-                data: { name, post, salary: parseInt(salary)},
+                data: updateData,
                 select: { name: true, email: true, post: true, salary: true }
             });
             if (!updateemployee) {
@@ -317,10 +327,10 @@ const employeesControllers = {
     deleteEmployee: async (req: customRequest, res: Response) => {
         try {
             // fetch employeeID from authentication
-            const employeeID = req.employee?.employee_id;
+            const { employeeID } = req.params
             if (!employeeID) {
-                log.warn("Authentication error: No employeeID found in request")
-                return exceptions.unauthorized(res, "authentication error !");
+                log.warn("Should provide employeeID");
+                return exceptions.badRequest(res, "No employeeID provide !");
             }
             log.info("employeeID is provided...");
 
@@ -331,6 +341,19 @@ const employeesControllers = {
                 return exceptions.notFound(res, "employee not found !");
             }
             log.info("employee exist...");
+
+            // Vérification des permissions
+            const requesterID = req.employee?.employee_id; // L'ID de l'utilisateur qui fait la requête
+            log.debug(`id de celui qui fait la requete: ${requesterID}`);
+
+            const requesterRole = req.employee?.role; // Le rôle de l'utilisateur qui fait la requête
+            log.debug(`role de celui qui fait la requete: ${requesterRole}`);
+
+            // Permettre à l'utilisateur de supprimer son propre compte ou à un admin de supprimer n'importe quel compte
+            if (requesterID !== employeeID && requesterRole !== RoleUser.admin) {
+                log.warn(`Unauthorized attempt to delete employee`);
+                return exceptions.forbiden(res, "You are not authorized to delete this account!");
+            }
 
             // Delete the employee
             const deleteemployee = await prisma.employee.delete({
@@ -374,15 +397,15 @@ const employeesControllers = {
             }
             log.info("employeeID is provided...");
 
-            const {oldPassword, newpassword } = req.body;
-            if (!oldPassword || !newpassword) {
+            const { oldPassword, newPassword } = req.body;
+            if (!oldPassword || !newPassword) {
                 log.warn("you have to enter all fields !");
                 return exceptions.badRequest(res, "All fields are mandatory !");
             }
             log.info("Information(s) entrées...");
 
             // check if employee exist
-            const employee = await prisma.employee.findUnique({ where: {employee_id: employeeID} });
+            const employee = await prisma.employee.findUnique({ where: { employee_id: employeeID } });
             if (!employee) {
                 log.warn(`employee not found: is it the employeeID is correct ? employeeID: ${employeeID}`);
                 return exceptions.notFound(res, "employee not found !");
@@ -395,7 +418,7 @@ const employeesControllers = {
             }
             log.info("Mot de passe correct... !");
 
-            const hashPassword = await hashText(newpassword);
+            const hashPassword = await hashText(newPassword);
             if (!hashPassword) {
                 log.warn(`Failed to hash the password!`)
                 return exceptions.badRequest(res, "error trying to crypt password !");
@@ -423,15 +446,15 @@ const employeesControllers = {
     // Reset Password
     resetPassword: async (req: customRequest, res: Response) => {
         try {
-             // fetch employeeID from authentication
-             const employeeID = req.employee?.employee_id;
-             if (!employeeID) {
-                 log.warn("Authentication error: No employeeID found in request")
-                 return exceptions.unauthorized(res, "authentication error !");
-             }
-             log.info("employeeID is provided...");
+            // fetch employeeID from authentication
+            const employeeID = req.employee?.employee_id;
+            if (!employeeID) {
+                log.warn("Authentication error: No employeeID found in request")
+                return exceptions.unauthorized(res, "authentication error !");
+            }
+            log.info("employeeID is provided...");
 
-             const {newpassword } = req.body;
+            const { newpassword } = req.body;
             if (!newpassword) {
                 log.warn("you have to enter new password !");
                 return exceptions.badRequest(res, "new password is mandatory !");
@@ -458,7 +481,7 @@ const employeesControllers = {
                 data: {
                     password: hashPassword,
                 }
-                });
+            });
 
             // Return success message
             log.info("password reset !")
@@ -552,7 +575,7 @@ const employeesControllers = {
 
             const otp = generateSimpleOTP();
             const now = new Date();
-            const expireOTP = new Date(now.getTime() + 10 * 60)
+            const expireOTP = new Date(now.getTime() + 10 * 60 * 1000)
             log.info("new OTP generated !")
 
             const newemployee = await prisma.employee.update({
