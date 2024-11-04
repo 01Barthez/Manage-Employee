@@ -7,8 +7,8 @@ const ROUTES = {
         GET_ALL_USER: '/profiles',
         UPDATE_USER: '/profile',
         DELETE_USER: '/profile/:employeeID',
-        CHANGE_PASSSWORD: "/change-password",
-        RESET_PASSSWORD: "/reset-password",
+        CHANGE_PASSSWORD: '/change-password',
+        RESET_PASSSWORD: '/reset-password',
         VERIFY_OTP: '/verify-otp',
         RESEND_OTP: '/resend-otp',
     },
@@ -21,7 +21,8 @@ const ROUTES = {
     
     ABSCENCES: {
         GET_ABSCENCES: '/attendance/absences/:employeeID',
-        GET_SALARY: '/salary/:employeeID'
+        GET_SALARY: '/salary/:employeeID',
+        DISGRACE_EMPLOYEE: '/attendance/pardon/:employeeID'
     }
 }
 

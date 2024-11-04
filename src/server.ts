@@ -14,6 +14,7 @@ import user from './routes/users-route';
 import deleteInvalidUser from './services/jobs/deleteUnverifiedUsers';
 import abscence from './routes/abscences-route';
 import attendance from './routes/attendances-route';
+import updateEmployeeStatus from './services/jobs/updateStatusEmployee';
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use(
 
 // All the jobs here
 deleteInvalidUser.start();
+updateEmployeeStatus.start();
 
 // Documentation
 setupSwagger(app);

@@ -25,6 +25,8 @@ model Employee {
 
   post   String
   salary Int
+  
+  isComeAndBack Boolean @default(false)
 
   //each user can have one or many attendances
   attendances Attendance[]

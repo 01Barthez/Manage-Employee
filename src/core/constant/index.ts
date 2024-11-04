@@ -21,3 +21,16 @@ export const MAX_BEGIN_HOURS = 8
 export const MAX_END_HOURS = 20
 
 export const HOURS_OF_WORKS = 8
+
+
+export const holidays = [
+	'01-01', // Le 1er janvier
+	'02-01', // Le 02 janvier
+	'24-12', // Le 24 decembre
+	'25-12', // Le 25 decembre 
+	'26-12', // Le 26 decembre
+	'11-02', // Le 11 fevrier
+	'01-05', // Le 20 mai
+	'20-05', // Le 20 mai
+	'26-12', // Le 26 decembre
+]

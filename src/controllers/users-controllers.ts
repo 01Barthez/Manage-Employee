@@ -615,18 +615,6 @@ const employeesControllers = {
             log.error("error occured when try to deconnect employee !")
             return exceptions.serverError(res, error);
         }
-    },
-
-    // Fonction qui va se charger de supprimer tous les otp mis a null a minuit tous les jours
-    DeleteUNVERIFIED: async () => {
-        try {
-            await prisma.employee.deleteMany({ where: { verified: false } });
-        } catch (error) {
-            log.error('Failed to delete unverified employees:', {
-                message: error instanceof Error ? error.message : "Unknown error occurred",
-            });
-            throw new Error(error instanceof Error ? error.message : "Unknow error occured");
-        }
     }
 }
 export default employeesControllers;

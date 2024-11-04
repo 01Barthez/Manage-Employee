@@ -134,8 +134,8 @@ const attendanceControllers = {
                 return exceptions.badRequest(res, "did not register upon arrival");
             }
 
-            //! Check if employee ever recorded the evening 
-
+            // Check if employee ever recorded the evening 
+            if (employee.isComeAndBack) return exceptions.conflict(res, "Has ever sign out today...!")
 
             // Get Coming Hours and Set time of ending time of the day
             let endingHours = today.getHours();
@@ -197,10 +197,16 @@ const attendanceControllers = {
             });
             if (!updateAttendance) return exceptions.notFound(res, "error when added end of attendance!");
 
+            // save the status of employee
+            await prisma.employee.update({
+                where: { employee_id: employeeID },
+                data: { isComeAndBack: true }
+            })
+
             // Return success message
             log.info("All is ok, success !")
             res
-                .status(HttpCode.CREATED)
+                .status(HttpCode.OK)
                 .json({ msg: `${attendance.startTime.getDate()}/${attendance.startTime.getMonth() + 1}/${attendance.startTime.getFullYear()}, at ${attendance.startTime.getHours()}H ${attendance.startTime.getMinutes()}Min` })!
         } catch (error) {
             log.error("error occured when saving end of attendance !")
@@ -265,7 +271,6 @@ const attendanceControllers = {
             return exceptions.serverError(res, error);
         }
     }
-
 }
 
 export default attendanceControllers;
