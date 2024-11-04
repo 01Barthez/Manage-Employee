@@ -61,7 +61,7 @@ employee.delete(
 );
 
 //? changepassword
-employee.put(
+employee.post(
     ROUTES.USER.CHANGE_PASSSWORD,
     authUser,
     validator.validatePWDs,
@@ -70,7 +70,7 @@ employee.put(
 );
 
 //? reset password
-employee.put(
+employee.post(
     ROUTES.USER.RESET_PASSSWORD,
     validator.validatenewPWD,
     validate,
@@ -78,7 +78,7 @@ employee.put(
 );
 
 //? verifyOTP
-employee.put(
+employee.post(
     ROUTES.USER.VERIFY_OTP,
     validator.validateOTP,
     validate,
@@ -86,7 +86,7 @@ employee.put(
 );
 
 //? resendOTP
-employee.get(
+employee.post(
     ROUTES.USER.RESEND_OTP,
     validator.validateEmployeeEmail,
     validate,

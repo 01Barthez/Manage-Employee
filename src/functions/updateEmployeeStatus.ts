@@ -3,7 +3,7 @@ import prisma from "@src/core/config/prismaClient";
 import { HOURS_OF_WORKS } from "@src/core/constant";
 
 
-const updateEmployeeStatus = async() => {
+const updateStatusEmployee = async() => {
     try {
         // Selectioner tous ceux qui ont été abscent ou qui n'ont pas remplir les formalité de début et de fin
         const informelEmployee = await prisma.employee.findMany({where: {isComeAndBack: true}});
@@ -31,11 +31,11 @@ const updateEmployeeStatus = async() => {
             }
         })
     } catch (error) {
-        log.error('Failed to delete unverified employees:', {
+        log.error('Failed to update employee status: ', {
             message: error instanceof Error ? error.message : "Unknown error occurred",
         });
         throw new Error(error instanceof Error ? error.message : "Unknow error occured");
     }
 }
 
-export default updateEmployeeStatus;
+export default updateStatusEmployee;

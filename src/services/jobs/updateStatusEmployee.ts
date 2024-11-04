@@ -1,6 +1,6 @@
 import log from '@src/core/config/logger';
 import { holidays } from '@src/core/constant';
-import updateEmployeeStatus from '@src/functions/updateEmployeeStatus';
+import updateStatusEmployee from '@src/functions/updateEmployeeStatus';
 import {CronJob} from 'cron';
 
 const isHolidays = (): boolean => {
@@ -16,7 +16,7 @@ const updateEmployeeStatus = new CronJob (
     '0 0 0 * * 1-6', // cronTime
 	async() => {
 		if(!isHolidays()) {
-			updateEmployeeStatus();
+			updateStatusEmployee();
 			log.info('Employee status updated !');
 		}
 

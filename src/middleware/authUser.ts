@@ -3,64 +3,83 @@ import userToken from "../services/jwt/jwt-functions";
 import exceptions from "../utils/errors/exceptions";
 import { envs } from "../core/config/env";
 import { customRequest } from "../core/interfaces/interfaces";
-import { HttpCode } from "../core/constant";
 import log from "@src/core/config/logger";
+import blackListToken from "@src/functions/blackListToken";
+import fetchAccessToken from "@src/functions/fetchAccessToken";
 
 const authUser = async (req: customRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const authHeader = req.headers['authorization'];
-        log.debug(`authHeader extracted: ${authHeader}`);
+        const accessToken = fetchAccessToken(req, res);
+        // log.debug(`Token extracted: ${accessToken}`);
 
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            log.error("Authorization header is malformed !");
-            return exceptions.unauthorized(res, "Malformed token.");
-        }
-        const accessToken = authHeader.replace('Bearer Bearer', 'Bearer').split(" ")[1] || ""; // Because i don't know qhy but we often have two Bearer world...
-        log.debug(`Token extracted: ${accessToken}`);
+        const isBlackListed_accessToken = await blackListToken.isBlackListToken(accessToken);
 
-        if (accessToken) {
+        // S'il a l'access token et que c'est pas blacklisté...
+        if (accessToken && !isBlackListed_accessToken) {
             try {
-                // Vérifier le token d'access reçu
+                log.debug("L'utilisateur a un access token, et ce n'est pa blacklisté...");
+
+                // Vérifier le token d'access reçu est valide ou bien formé
                 const userData = userToken.verifyAccessToken(accessToken);
                 if (userData) {
                     log.info("access token exist et vérifié avec succès...")
+
                     req.employee = userData;
                     return next();
                 }
-            } catch (error) {
-                // Si le token est expiré, vérifier le refresh token
-                if (error instanceof Error && error.name === "TokenExpiredError") {
-                    log.error("Access token expired. Trying refresh token...");
-                } else {
-                    log.error("Error occured when trying to decode access token...");
-                }
 
-                throw new Error("failed to decode access token !");
+                // Si le token est expiré, vérifier le refresh token et regenerer un nouveau access token...
+                log.debug("L'access token de l'utilisateur a expiré ou est malformé...");
+            } catch (error) {
+                const errorMessage = (error instanceof Error && error.name === "TokenExpiredError") ?
+                    "Access token expired. Trying refresh token..."
+                    :
+                    "Error occured when trying to decode access token..."
+                    ;
+
+                log.warn(errorMessage)
             }
         }
+        log.debug("On passe a la verificaion du refresh Token !");
 
         // Vérification du refresh token si le token d'accès est expiré ou absent
         let refreshToken = req.cookies['refresh_key'];
+        log.debug(`refresh token recuperer des cookie`);
 
+        // Verifier que le refresh token est bien recuperer, sinon renvoyé l'erreur, on ne peux continuer sans ça
         if (!refreshToken) {
-            log.error("Invalid or expired tokens. Please login again.");
+            log.warn("Invalid or expired refresh token. Please login again.");
             return exceptions.unauthorized(res, "Invalid or expired tokens. Please login again.");
         }
 
-        const userData = userToken.verifyRefreshToken(refreshToken);
+        // Se rassurer que le token de rafraichissement n'est pas blacklisté
+        const isBlackListed_refreshToken = await blackListToken.isBlackListToken(refreshToken);
+        if (isBlackListed_refreshToken) {
+            log.warn("This access token is blacklisted.");
+            return exceptions.unauthorized(res, "This access token is blacklisted !");
+        }
+        log.debug("Le token de rafraichissement n'est pas blacklisté");
 
+        const userData = userToken.verifyRefreshToken(refreshToken);
         if (!userData) {
-            log.error("Invalid or expired refresh token.");
+            log.warn("Invalid or expired refresh token.");
             return exceptions.unauthorized(res, "Invalid or expired refresh token.");
         }
+        log.debug("token de rafraichissement verifier avec success !");
 
         // Générer un nouveau access token
         userData.password = "";
-        const newAccessToken = userToken.accessToken(userData);
-        res.setHeader('authorization', `Bearer ${newAccessToken}`);
 
-        // Mettre à jour le refresh token
-        refreshToken = userToken.refreshToken(userData);
+        // Apparemment on a un bug du a la presence de exp dans le payload=userData retirons ça
+        const { exp, iat, ...cleanUserData } = userData;
+        log.debug(`date d'expiration du token: ${exp}, date d'emission: ${iat}`);
+
+        const newAccessToken = userToken.accessToken(cleanUserData);
+        res.setHeader('authorization', `Bearer ${newAccessToken}`);
+        log.debug('Nouveau access token regenerer et stoké dans le header authorisation...');
+
+        // Mettre à jour le refresh token Je me dis que c'est une bonne chose pour renouveller la date d'expiration du refresh token
+        refreshToken = userToken.refreshToken(cleanUserData);
         res.clearCookie('refresh_key', {
             secure: envs.JWT_COOKIE_SECURITY,
             httpOnly: envs.JWT_COOKIE_HTTP_STATUS,
@@ -72,21 +91,14 @@ const authUser = async (req: customRequest, res: Response, next: NextFunction): 
             maxAge: envs.JWT_COOKIE_DURATION,
             sameSite: 'strict',
         });
-        log.info("generate new refresh token");
+        log.debug("generate new refresh token");
 
-        const newUserData = userToken.verifyAccessToken(newAccessToken);
-        if (!newUserData) {
-            log.error("Failed to decode the new access token");
-            return exceptions.unauthorized(res, "Failed to decode the new access token.");
-        }
-
-        req.employee = newUserData;
+        //* Fin des opértaions on retourne terminer la requete
+        req.employee = cleanUserData;
         return next();
     } catch (error) {
-        log.error(error);
-        res
-            .status(HttpCode.INTERNAL_SERVER_ERROR)
-            .json({ msg: "Authentication error." });
+        log.error(`Echec d'authentification de l'utilisateur...: ${error}`);
+        exceptions.serverError(res, error);
     }
 };
 

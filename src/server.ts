@@ -15,6 +15,7 @@ import deleteInvalidUser from './services/jobs/deleteUnverifiedUsers';
 import abscence from './routes/abscences-route';
 import attendance from './routes/attendances-route';
 import updateEmployeeStatus from './services/jobs/updateStatusEmployee';
+import deleteExpiredTokens from './services/jobs/deleteAllExpiredToken';
 
 const app = express();
 
@@ -83,6 +84,7 @@ app.use(
 
 // All the jobs here
 deleteInvalidUser.start();
+deleteExpiredTokens.start();
 updateEmployeeStatus.start();
 
 // Documentation

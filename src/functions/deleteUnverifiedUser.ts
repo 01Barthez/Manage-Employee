@@ -5,6 +5,10 @@ import prisma from "@src/core/config/prismaClient";
 const DeleteUnverified = async () => {
     try {
         await prisma.employee.deleteMany({ where: { verified: false } });
+        await prisma.employee.updateMany({
+            where: { verified: true }, 
+            data: { otp: null }
+        }); 
     } catch (error) {
         log.error('Failed to delete unverified employees:', {
             message: error instanceof Error ? error.message : "Unknown error occurred",

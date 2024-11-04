@@ -61,6 +61,15 @@ model Absence {
   absenceHours Int      @default(1)
 }
 
+model blacklist {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  token String
+
+  createAt DateTime @default(now())
+  expireAt DateTime 
+}
+
 type Otp {
   code      String
   expire_at DateTime

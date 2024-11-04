@@ -12,6 +12,10 @@ export interface IEmployee {
     role: RoleUser;
     attendances: unknown[];
     absences: unknown[];
+
+    // Signature ajouter lors de la signature jwt
+    iat?: number;
+    exp?: number;
 }
 
 export interface Otp {
