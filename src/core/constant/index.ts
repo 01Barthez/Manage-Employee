@@ -17,10 +17,14 @@ export enum HttpCode {
 
 export const allowedExtensionsProfile = ['.jpg', '.png', '.jpeg', '.svg', '.gif'];
 
-export const MAX_BEGIN_HOURS = 8
-export const MAX_END_HOURS = 20
+export const MAX_BEGIN_HOURS = 8;
+export const MAX_END_HOURS = 20;
 
-export const HOURS_OF_WORKS = 8
+export const HOURS_OF_WORKS = 8;
+export const DAYS_OF_WORKS = 30;
+
+export const SALARY_ROUND_FACTOR = 50;
+export const MIN_SALARY = 5000;
 
 
 export const holidays = [

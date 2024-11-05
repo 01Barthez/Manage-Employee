@@ -4,10 +4,10 @@ import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
 import { customRequest, RoleUser } from "@src/core/interfaces/interfaces";
 import blackListAccessAndRefresToken from "@src/functions/blackListAccessAndRefresToken";
-import { comparePassword, hashText } from "@src/functions/crypt-password";
-import generateSimpleOTP from "@src/functions/generate-otp";
 import employeeToken from "@src/services/jwt/jwt-functions";
 import sendMail from "@src/services/mail/sendMail/send-mail";
+import { comparePassword, hashText } from "@src/services/password/crypt-password";
+import generateSimpleOTP from "@src/services/password/generate-otp";
 import exceptions from "@src/utils/errors/exceptions";
 import { Request, Response } from "express";
 

@@ -3,18 +3,18 @@ import prisma from "@src/core/config/prismaClient";
 import { HOURS_OF_WORKS } from "@src/core/constant";
 
 
-const updateStatusEmployee = async() => {
+const updateStatusEmployee = async () => {
     try {
         // Selectioner tous ceux qui ont été abscent ou qui n'ont pas remplir les formalité de début et de fin
-        const informelEmployee = await prisma.employee.findMany({where: {isComeAndBack: true}});
+        const informelEmployee = await prisma.employee.findMany({ where: { isComeAndBack: true } });
 
         // Remplir les abscences de tous ceux qui ne sont pas venu...
         const abscencesUpdate = informelEmployee.map(async (employee) => {
-            return await prisma.absence.updateMany({
-                where: {
-                    employeeID: employee.employee_id
-                },
-                data: HOURS_OF_WORKS
+            return await prisma.absence.createMany({
+                data: {
+                    employeeID: employee.employee_id,
+                    absenceHours: HOURS_OF_WORKS,
+                }
             });
         })
 
@@ -30,6 +30,8 @@ const updateStatusEmployee = async() => {
                 isComeAndBack: false
             }
         })
+
+        log.info('Employee status updated !');
     } catch (error) {
         log.error('Failed to update employee status: ', {
             message: error instanceof Error ? error.message : "Unknown error occurred",

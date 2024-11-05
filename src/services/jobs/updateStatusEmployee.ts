@@ -5,7 +5,7 @@ import {CronJob} from 'cron';
 
 const isHolidays = (): boolean => {
 	const today = new Date();
-	const dateOdTodayFormatted = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+	const dateOdTodayFormatted = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}`;
 	
 	log.info(`date of today formated: ${dateOdTodayFormatted}`);
 
@@ -13,14 +13,17 @@ const isHolidays = (): boolean => {
 }
 
 const updateEmployeeStatus = new CronJob (
-    '0 0 0 * * 1-6', // cronTime
+    '0 0 0 * * 1-6', // Du lundi au samedi au minuit
 	async() => {
-		if(!isHolidays()) {
-			updateStatusEmployee();
-			log.info('Employee status updated !');
+		try {
+			log.info('updating employee status...');                
+			if(!isHolidays()) {
+				updateStatusEmployee();
+				log.info('ce n\'est pas un Jour férié on mets a jours !');			
+			}
+		} catch (error) {
+			log.error(`Erreur lors de la mise a jor du status des employés : ${error}`);
 		}
-
-		log.info('Jour férié on ne fait rien !');
 	},
 	null, // onComplete
 	true, // start

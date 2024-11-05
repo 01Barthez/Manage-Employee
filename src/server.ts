@@ -16,6 +16,7 @@ import abscence from './routes/abscences-route';
 import attendance from './routes/attendances-route';
 import updateEmployeeStatus from './services/jobs/updateStatusEmployee';
 import deleteExpiredTokens from './services/jobs/deleteAllExpiredToken';
+import notifiedEmployeeSalary from './services/jobs/sendEmployeeSalary';
 
 const app = express();
 
@@ -86,6 +87,7 @@ app.use(
 deleteInvalidUser.start();
 deleteExpiredTokens.start();
 updateEmployeeStatus.start();
+notifiedEmployeeSalary.start();
 
 // Documentation
 setupSwagger(app);

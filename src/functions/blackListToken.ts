@@ -75,6 +75,7 @@ const blackListToken = {
                     }
                 }
             })
+            log.info('expired token successfull deleted !');                
         } catch (error) {
             log.error('Failed to deleted expired token: ', {
                 message: error instanceof Error ? error.message : "Unknown error occurred",

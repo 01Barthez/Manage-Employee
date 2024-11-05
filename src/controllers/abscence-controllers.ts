@@ -1,6 +1,11 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
-import { HOURS_OF_WORKS, HttpCode } from "@src/core/constant";
+import { 
+    DAYS_OF_WORKS, 
+    HOURS_OF_WORKS, 
+    HttpCode, MIN_SALARY, 
+    SALARY_ROUND_FACTOR 
+} from "@src/core/constant";
 import { customRequest } from "@src/core/interfaces/interfaces";
 import calculateAbscenceHours from "@src/functions/calculateAbscenceHours";
 import exceptions from "@src/utils/errors/exceptions";
@@ -38,7 +43,7 @@ const abscencesControllers = {
         }
     },
 
-        abscencesAdjustments: async (req: Request, res: Response) => {
+    abscencesAdjustments: async (req: Request, res: Response) => {
         try {
             const { employeeID } = req.params
             if (!employeeID) {
@@ -61,13 +66,13 @@ const abscencesControllers = {
 
             // fetch salary of this employee
             const employeeSalary = employee.salary;
-            const hoursSalary = (employeeSalary) / (HOURS_OF_WORKS * 30);
+            const hoursSalary = (employeeSalary) / (HOURS_OF_WORKS * DAYS_OF_WORKS);
             log.debug(`Employee Salary: ${employeeSalary}\n Salary By Hours: ${hoursSalary} !`);
 
             // Amount Reduction
             const reduction = hoursSalary * totalHours;
             log.debug(`Montant de reduction: ${reduction}`);
-            const newSalary = Math.round((employeeSalary - reduction) /  50) * 50;
+            const newSalary = Math.max(Math.round((employeeSalary - reduction) / SALARY_ROUND_FACTOR) * SALARY_ROUND_FACTOR, MIN_SALARY);
             log.debug(`Nouveau salaire: ${newSalary}`);
 
             // Return success message

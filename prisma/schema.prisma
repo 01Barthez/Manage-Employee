@@ -41,7 +41,7 @@ model Attendance {
   attendance_id String @id @default(auto()) @map("_id") @db.ObjectId
 
   // Relationship between the employee and his attendance 
-  employee   Employee @relation(fields: [employeeID], references: [employee_id])
+  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade)
   employeeID String   @db.ObjectId
 
   date DateTime @default(now())
@@ -54,7 +54,7 @@ model Absence {
   absence_id String @id @default(auto()) @map("_id") @db.ObjectId
 
   // Relationship between the employee and his attendance 
-  employee   Employee @relation(fields: [employeeID], references: [employee_id])
+  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade)
   employeeID String   @db.ObjectId
 
   date         DateTime @default(now())
