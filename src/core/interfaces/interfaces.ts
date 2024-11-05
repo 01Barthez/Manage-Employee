@@ -5,6 +5,7 @@ export interface IEmployee {
     name: string;
     email: string;
     password: string;
+    profileImage?: string;
     otp?: Otp;
     verified: boolean;
     post: string;
@@ -18,6 +19,14 @@ export interface IEmployee {
     exp?: number;
 }
 
+export interface IUpdateEmployee {
+    name?: string,
+    email?: string,
+    post?: string,
+    salary?: number;
+    role?: RoleUser;
+    profileImage?: string;
+}
 export interface Otp {
     code: string;
     expire_at: Date;

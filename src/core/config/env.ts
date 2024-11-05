@@ -46,6 +46,9 @@ export const envs = {
 	AWS_SECRET_ACCESS_KEY: get('AWS_SECRET_ACCESS_KEY').default("your_secret_key").asString(),
 	AWS_REGION: get('AWS_REGION').default("your_region").asString(),
 	AWS_BUCKET_NAME: get('AWS_BUCKET_NAME').default("your_bucket_name").asString(),
+
+	MINIO_ROOT_USER: get('MINIO_ROOT_USER').default("user-root").asString(),
+	MINIO_ROOT_PASSWORD: get('MINIO_ROOT_PASSWORD').default("user-password").asString(),
 	MIMIO_URL: get('MIMIO_URL').default("http://localhost:9000/").asUrlString(),
 };
 

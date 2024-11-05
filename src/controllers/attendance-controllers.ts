@@ -31,6 +31,12 @@ const attendanceControllers = {
             const dateOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate())
             log.debug(`Date of today: ${dateOfToday}`);
 
+            // Verifier Que l'employee sign a une heure raisonnable et proche de l'heure du début
+            if (today.getHours() < (MAX_BEGIN_HOURS - 2)) {
+                log.warn("Il est encore trot tot pour le début des activités...");
+                return exceptions.unauthorized(res, "It's too soon to check in... wait for after !");
+            }
+            log.debug("l'heure est raisonnable");
             // Check if employee had ever sign  in
             const attendanceExist = await prisma.attendance.findFirst({
                 where: {

@@ -19,7 +19,8 @@ model Employee {
   name        String
   email       String @unique
   password    String
-
+  profileImage String?
+  
   otp      Otp?
   verified Boolean @default(false)
 

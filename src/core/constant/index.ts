@@ -15,7 +15,8 @@ export enum HttpCode {
     SERVICE_UNAVAILABLE = 503
 }
 
-export const allowedExtensionsProfile = ['.jpg', '.png', '.jpeg', '.svg', '.gif'];
+export const allowedExtensionsProfile = ['.jpg', '.png', '.jpeg', '.svg'];
+export const allowMimeTypeProfile = ['image/jpeg', 'image/png'];
 
 export const MAX_BEGIN_HOURS = 8;
 export const MAX_END_HOURS = 20;

@@ -10,7 +10,7 @@ export const validator = {
         // Validation of user name
         body('name')
             .exists().withMessage('Le nom de l\'employee est requis !')
-            .trim().notEmpty().withMessage('le nom ne doit pas etre vide !')
+            .trim().withMessage('le nom ne doit pas etre vide !')
             .isString().withMessage('le nom doit etre une chaine de caractere !')
             .isLength({ min: 3 }).withMessage('le nom est trop court !')
             .isLength({ max: 60 }).withMessage('le nom est trop long !')

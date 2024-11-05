@@ -2,8 +2,9 @@ import { envs } from "@src/core/config/env";
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
-import { customRequest, RoleUser } from "@src/core/interfaces/interfaces";
+import { customRequest, IUpdateEmployee, RoleUser } from "@src/core/interfaces/interfaces";
 import blackListAccessAndRefresToken from "@src/functions/blackListAccessAndRefresToken";
+import uploadImage from "@src/functions/uploadImage";
 import employeeToken from "@src/services/jwt/jwt-functions";
 import sendMail from "@src/services/mail/sendMail/send-mail";
 import { comparePassword, hashText } from "@src/services/password/crypt-password";
@@ -11,8 +12,10 @@ import generateSimpleOTP from "@src/services/password/generate-otp";
 import exceptions from "@src/utils/errors/exceptions";
 import { Request, Response } from "express";
 
+
+    
 const employeesControllers = {
-    // function for inscription of employee //!OK
+    // function for inscription of employee
     inscription: async (req: Request, res: Response) => {
         try {
             // fetch data from body to create new employee
@@ -39,12 +42,17 @@ const employeesControllers = {
             }
             log.info("Mot de passe hashé...");
 
+            // Generer le code otp qu'on va garder
             const otp = generateSimpleOTP();
             const now = new Date();
             log.debug(`date de maintenant: ${now.toISOString()} `)
             const expireOTP = new Date(now.getTime() + 10 * 60 * 1000)
             log.debug(`date d'expiration: ${expireOTP.toISOString()} `)
             log.info("code OTP généré...")
+
+            // sauvegarder l'image et recuperer le lien
+            const profileUrl = await uploadImage(req);
+            log.info(`url de la photo de profile: ${profileUrl}`);
 
             const newemployee = await prisma.employee.create({
                 data: {
@@ -57,7 +65,8 @@ const employeesControllers = {
                     },
                     post,
                     salary: parseInt(salary),
-                    role
+                    role,
+                    profileImage: profileUrl
                 }
             });
             if (!newemployee) {
@@ -107,6 +116,12 @@ const employeesControllers = {
                 return exceptions.notFound(res, "employee not exist !");
             }
             log.info("employee exist...");
+
+            // Check that's verified user
+            if(!employee.verified) {
+                log.warn(`employee with email: ${email} should verified his otp before !`);
+                return exceptions.unauthorized(res, "Should verified his otp before !");
+            }
 
             // Check if it's correct password
             const isPassword = await comparePassword(password, employee.password);
@@ -279,7 +294,7 @@ const employeesControllers = {
 
             // fetch data from body
             const { name, email, post, salary, role } = req.body;
-            const updateData: any = {}; // Create an object to hold the fields to update
+            const updateData: IUpdateEmployee = {}; // Create an object to hold the fields to update
 
             // Add fields to updateData only if they are provided
             if (name) updateData.name = name;
@@ -287,6 +302,12 @@ const employeesControllers = {
             if (post) updateData.post = post;
             if (salary) updateData.salary = parseInt(salary);
             if (role) updateData.role = role;
+
+            // sauvegarder l'image et recuperer le lien
+            const profileUrl = await uploadImage(req);
+            log.info(`url de la photo de profile: ${profileUrl}`);
+        
+            if(profileUrl && profileUrl.length > 1) updateData.profileImage = profileUrl;
 
             // If no fields are provided, return a bad request error
             if (Object.keys(updateData).length === 0) {

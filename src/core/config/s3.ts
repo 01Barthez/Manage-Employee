@@ -5,10 +5,10 @@ import log from './logger';
 const s3 = new S3Client({
     region: envs.AWS_REGION,
     credentials: {
-        accessKeyId: envs.AWS_ACCESS_KEY_ID,
-        secretAccessKey: envs.AWS_SECRET_ACCESS_KEY,
+        accessKeyId: envs.MINIO_ROOT_USER, // envs.AWS_ACCESS_KEY_ID,
+        secretAccessKey: envs.MINIO_ROOT_PASSWORD // envs.AWS_SECRET_ACCESS_KEY,
     },
-    
+     
     // Parcequ'on utilise minio
     endpoint: envs.MIMIO_URL,
     forcePathStyle: true,

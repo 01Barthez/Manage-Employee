@@ -1,6 +1,6 @@
 import usersControllers from '@src/controllers/users-controllers';
 import authUser from '@src/middleware/authUser';
-// import upload from "@src/middleware/upload-file";
+import { upload, handleMulterErrors } from "@src/middleware/upload-file";
 import { validate, validator } from '@src/services/validator/validator';
 import ROUTES from '@src/utils/mocks/mocks-routes';
 import { Router } from 'express';
@@ -10,9 +10,10 @@ const employee: Router = Router();
 //? Inscription of new employee
 employee.post(
     ROUTES.USER.INSCRIPTION,
-    validator.validateEmployee,
+    upload.single('profile'),
+    handleMulterErrors,
+    validator.validateEmployee, 
     validate,
-    // upload.single('profile'),
     usersControllers.inscription
 );
 
@@ -47,9 +48,10 @@ employee.get(
 employee.put(
     ROUTES.USER.UPDATE_USER,
     authUser,
+    upload.single('profile'),
+    handleMulterErrors,
     validator.validateUserUpdate,
     validate,
-    // upload.single('image'),
     usersControllers.updateEmployeeData
 );
 
