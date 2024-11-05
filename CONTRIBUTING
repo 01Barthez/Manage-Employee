@@ -1,10 +1,10 @@
-# Contributing to **Express-js-Started**
+# Contributing to **WorketYamo Employee Management System**
 
-Merci d'envisager de contribuer à **Express-js-Started**! Nous apprécions l'aide de la communauté pour améliorer ce projet de template. Ce document vous guidera à travers le processus de contribution.
+Merci d'envisager de contribuer à **WorketYamo Employee Management System**! Nous apprécions l'aide de la communauté pour améliorer ce projet de Management System. Ce document vous guidera à travers le processus de contribution.
 
 ## Table des matières
 
-- [Contributing to **Express-js-Started**](#contributing-to-express-js-started)
+- [Contributing to **WorketYamo Employee Management System**](#contributing-to-worketyamo-employee-management-system)
   - [Table des matières](#table-des-matières)
   - [Comment contribuer](#comment-contribuer)
   - [Règles de conduite](#règles-de-conduite)
@@ -87,7 +87,7 @@ Nous apprécions toutes les contributions! Pour envoyer une pull request, suivez
 Assurez-vous que votre code fonctionne correctement en exécutant les tests. Si vous n'avez pas encore écrit de tests pour vos modifications, merci d'en ajouter.
 
 ```bash
-npm run test
+yarn run test #Pas encore fonctionnel
 ```
 
 ## Licence

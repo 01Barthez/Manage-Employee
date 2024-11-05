@@ -36,7 +36,7 @@ const upload = multer({
             log.warn(`Unsupported file format : ${extension}`);
             return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.filename) as unknown as null, false);
         }
-
+ 
         // Controler le type MIME du fichier que l'utilisateur entre
         if (!allowMimeTypeProfile.includes(mimeType)) {
             log.warn(`Unsupported file format : ${mimeType}`);
@@ -45,7 +45,6 @@ const upload = multer({
 
         cb(null, true);
     }
-
 });
 
 // Gestion globale des erreurs multer
