@@ -165,34 +165,37 @@ const attendanceControllers = {
             const newAbscencesHours = Math.max(HOURS_OF_WORKS - hours_worked, 0);
             let totalAbscenceHours = newAbscencesHours;
 
-            // fetch abscences hours of morning
-            const previousAbscence = await prisma.absence.findFirst({
-                where: {
-                    employeeID,
-                    date: dateOfToday
-                }
-            })
-
-            if (previousAbscence) {
-                totalAbscenceHours = Math.min(newAbscencesHours + previousAbscence.absenceHours, HOURS_OF_WORKS);
-
-                // update abscence hours
-                await prisma.absence.update({
+            // Save abscence hours only if it's upper than 0
+            if (totalAbscenceHours > 0) {
+                // fetch abscences hours of morning
+                const previousAbscence = await prisma.absence.findFirst({
                     where: {
-                        absence_id: previousAbscence.absence_id
-                    },
-                    data: { employeeID, date: dateOfToday, absenceHours: totalAbscenceHours }
+                        employeeID,
+                        date: dateOfToday
+                    }
                 })
-            } else {
-                totalAbscenceHours = newAbscencesHours;
 
-                // create abscence hours
-                await prisma.absence.create({
-                    data: { employeeID, date: dateOfToday, absenceHours: totalAbscenceHours }
-                })
+                if (previousAbscence) {
+                    totalAbscenceHours = Math.min(newAbscencesHours + previousAbscence.absenceHours, HOURS_OF_WORKS);
+
+                    // update abscence hours
+                    await prisma.absence.update({
+                        where: {
+                            absence_id: previousAbscence.absence_id
+                        },
+                        data: { employeeID, date: dateOfToday, absenceHours: totalAbscenceHours }
+                    })
+                } else {
+                    totalAbscenceHours = newAbscencesHours;
+
+                    // create abscence hours
+                    await prisma.absence.create({
+                        data: { employeeID, date: dateOfToday, absenceHours: totalAbscenceHours }
+                    })
+                }
             }
 
-            // sort by date all the attendance of that employee 
+            // save the end time of employee 
             const updateAttendance = await prisma.attendance.update({
                 where: {
                     attendance_id: attendance.attendance_id
@@ -203,7 +206,7 @@ const attendanceControllers = {
             });
             if (!updateAttendance) return exceptions.notFound(res, "error when added end of attendance!");
 
-            // save the status of employee
+            // update the status of employee to true
             await prisma.employee.update({
                 where: { employee_id: employeeID },
                 data: { isComeAndBack: true }

@@ -1,5 +1,6 @@
 // Configurations de Middlewares
 import express from 'express';
+import https from 'https';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import { setupSwagger } from './swagger';
@@ -17,6 +18,8 @@ import attendance from './routes/attendances-route';
 import updateEmployeeStatus from './services/jobs/updateStatusEmployee';
 import deleteExpiredTokens from './services/jobs/deleteAllExpiredToken';
 import notifiedEmployeeSalary from './services/jobs/sendEmployeeSalary';
+import keys from './core/config/key';
+import redirectURL from './middleware/redirectUrl';
 
 const app = express();
 
@@ -24,7 +27,11 @@ const app = express();
 app.use(disableLogsInProduction); // Middleware pour désactiver les logs
 
 // Configurations de securité
-app.use(helmet()) //Pour configurer les entete http securisés
+app.use(helmet.hsts({
+	maxAge: 63072000, // 2 year to remenber to use Https
+	includeSubDomains: true,
+	preload: true,
+})) //Pour configurer les entete http securisés
 
 app.use(cors({
 	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -44,6 +51,9 @@ app.use(
 );//limite le nombre de requete
 
 app.use(cookieParser()); //configuration des cookies (JWT)
+
+// Redirect unsecure URL: Move HTTP to HTTPS
+app.use(redirectURL);
 
 // Middleware de journalisation avec Morgan qui utilise Winston
 const morganFormatRes = ':method :url  :status :response-time ms' // Format de journalisation 
@@ -92,5 +102,12 @@ notifiedEmployeeSalary.start();
 // Documentation
 setupSwagger(app);
 
+// Creation du server https
+const credentials = {
+	key: keys.tls.privateKey,
+	cert: keys.tls.certificate
+}
+const httpsServer = https.createServer(credentials, app);
+
 // Export application to app file
-export default app;
+export {app, httpsServer};

@@ -29,12 +29,13 @@ const exceptions = {
     },
 
     serverError : (res: Response, error: unknown) => {
+        const messageError = error instanceof Error ? error.message : JSON.stringify(error);
         log.error('Internal server error', {
-            message: error instanceof Error ? error.message : "Unknown error occurred",
+            message: messageError,
         });
         res
             .status(HttpCode.INTERNAL_SERVER_ERROR)
-            .json({msg: error})
+            .json({msg: messageError})
     }
 }
 

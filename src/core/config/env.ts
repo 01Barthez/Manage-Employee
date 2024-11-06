@@ -6,6 +6,8 @@ import { get } from 'env-var';
 export const envs = {
 	//  Global Informations
 	PORT: get('PORT').required().asPortNumber(),
+	PORT2: get('PORT2').required().asPortNumber(),
+	
 	API_PREFIX: get('DEFAULT_API_PREFIX').default('/api/v1').asString(),
 	NODE_ENV: get('NODE_ENV').default('development').asString(),
 
@@ -20,7 +22,10 @@ export const envs = {
 	MONGO_INITDB_ROOT_USERNAME: get('MONGO_INITDB_ROOT_USERNAME').default('admin').asString(),
 	MONGO_INITDB_ROOT_PASSWORD: get('MONGO_INITDB_ROOT_PASSWORD').default('test123').asString(),
 	MONGO_DB_NAME: get('MONGO_DB_NAME').default('worketyamo').asString(),
-	
+
+	TLS_PRIVATE_KEY: get('TLS_PRIVATE_KEY').default("./keys/server.key").asString(),
+	TLS_CERTIFICATE: get('TLS_CERTIFICATE').default("./keys/server.cert").asString(),
+
 	// Information about jwt tokens
 	JWT_ALGORITHM: get('JWT_ALGORITHM').default("RS256").asString(),
 	JWT_ACCESS_EXPIRES_IN: get('JWT_ACCESS_EXPIRES_IN').default("20min").asString(),
