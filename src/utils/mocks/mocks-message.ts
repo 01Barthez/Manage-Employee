@@ -18,3 +18,8 @@ export const UPLOAD_MSG = {
     SUCCESS: "Image successful uploaded 👌, congratulation 👏!",
     FAILED_UPLOAD: "Aucun fichier téléchargé 🕵️‍♂️"
 }
+
+export const LIMIT_REQUEST = {
+    GLOBAL_ROUTE: 'Trop de Requete à partir de cette adresse IP !',
+    SUB_ROUTE: "Trop de requete à partir de cette addresse IP sur ce endPoint !"
+}

@@ -46,9 +46,9 @@ const employeesControllers = {
             const otp = generateSimpleOTP();
             const now = new Date();
             log.debug(`date de maintenant: ${now.toISOString()} `)
-            const expireOTP = new Date(now.getTime() + 10 * 60 * 1000)
+            const expireOTP = new Date(now.getTime() + envs.OTP_MAX_AGE)
             log.debug(`date d'expiration: ${expireOTP.toISOString()} `)
-            log.info("code OTP généré...")
+            log.info("code OTP généré...");
 
             // sauvegarder l'image et recuperer le lien
             const profileUrl = await uploadImage(req);

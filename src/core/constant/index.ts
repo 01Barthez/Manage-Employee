@@ -6,6 +6,7 @@ export enum HttpCode {
     CREATED = 201,
     NO_CONTENT = 204,
     MOVE_PERMANENTLY = 301,
+    FOUND = 302,
     BAD_REQUEST = 400,
     UNAUTHORIZED = 401,
     FORBIDDEN = 403,

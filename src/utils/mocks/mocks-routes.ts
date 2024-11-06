@@ -23,7 +23,12 @@ const ROUTES = {
         GET_ABSCENCES: '/attendance/absences/:employeeID',
         GET_SALARY: '/salary/:employeeID',
         DISGRACE_EMPLOYEE: '/attendance/pardon/:employeeID'
+    },
+
+    CONFIG: {
+        CSRF_TOKEN: '/csrf-token'
     }
+
 }
 
 export default  ROUTES;
