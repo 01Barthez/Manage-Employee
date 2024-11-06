@@ -1,12 +1,10 @@
-// src/core/config/env.ts
-
-import 'dotenv/config';
+import 'dotenv-safe/config';
 import { get } from 'env-var';
 
 export const envs = {
 	//  Global Informations
-	PORT: get('PORT').required().asPortNumber(),
-	PORT2: get('PORT2').required().asPortNumber(),
+	PORT: get('PORT').default(443).asPortNumber(),
+	PORT2: get('PORT2').default(3000).asPortNumber(),
 	
 	API_PREFIX: get('DEFAULT_API_PREFIX').default('/api/v1').asString(),
 	NODE_ENV: get('NODE_ENV').default('development').asString(),
@@ -17,54 +15,48 @@ export const envs = {
 	MAX_UNIQ_QUERY_NUMBER: get('MAX_UNIQ_QUERY_NUMBER').default('10').asInt(),
 	MAX_UNIQ_QUERY_WINDOW: get('MAX_UNIQ_QUERY_WINDOW').default('30').asInt(),
 	
-
-	// DataBAse Inforlation
-	MONGO_INITDB_ROOT_USERNAME: get('MONGO_INITDB_ROOT_USERNAME').default('admin').asString(),
-	MONGO_INITDB_ROOT_PASSWORD: get('MONGO_INITDB_ROOT_PASSWORD').default('test123').asString(),
-	MONGO_DB_CLUSTER_URL: get('MONGO_DB_CLUSTER_URL').default('cluster-url').asString(),
-	MONGO_DB_NAME: get('MONGO_DB_NAME').default('worketyamo').asString(),
+	// DataBAse Information
+	DATABASE_URL: get('DATABASE_URL').required().asString(),
 	
 	// About TLS Certificate
-	TLS_PRIVATE_KEY: get('TLS_PRIVATE_KEY').default("./keys/server.key").asString(),
-	TLS_CERTIFICATE: get('TLS_CERTIFICATE').default("./keys/server.cert").asString(),
+	TLS_PRIVATE_KEY: get('TLS_PRIVATE_KEY').required().asString(),
+	TLS_CERTIFICATE: get('TLS_CERTIFICATE').required().asString(),
 
 	// Information about jwt tokens
 	JWT_ALGORITHM: get('JWT_ALGORITHM').default("RS256").asString(),
 	JWT_ACCESS_EXPIRES_IN: get('JWT_ACCESS_EXPIRES_IN').default("20min").asString(),
-	JWT_REFRESH_EXPIRES_IN: get('JWT_REFRESH_EXPIRES_IN').default("30d").asString(),
+	JWT_REFRESH_EXPIRES_IN: get('JWT_REFRESH_EXPIRES_IN').default("14d").asString(),
 	// About secret keys routes
-	JWT_PRIVATE_KEY: get('JWT_PRIVATE_KEY').default("./keys/private.key").asString(),
-	JWT_PUBLIC_KEY: get('JWT_PUBLIC_KEY').default("./keys/public.key").asString(),
-	JWT_REFRESH_PRIVATE_KEY: get('JWT_REFRESH_PRIVATE_KEY').default("./keys/refresh-private.key").asString(),
-	JWT_REFRESH_PUBLIC_KEY: get('JWT_REFRESH_PUBLIC_KEY').default("./keys/refresh-public.key").asString(),
+	JWT_PRIVATE_KEY: get('JWT_PRIVATE_KEY').required().asString(),
+	JWT_PUBLIC_KEY: get('JWT_PUBLIC_KEY').required().asString(),
+	JWT_REFRESH_PRIVATE_KEY: get('JWT_REFRESH_PRIVATE_KEY').required().asString(),
+	JWT_REFRESH_PUBLIC_KEY: get('JWT_REFRESH_PUBLIC_KEY').required().asString(),
 	
 	// About Cookies Setting
-	JWT_COOKIE_DURATION: get('JWT_COOKIE_DURATION').default(5000).asInt(),
+	JWT_COOKIE_DURATION: get('JWT_COOKIE_DURATION').default(2592000000).asInt(),
 	JWT_COOKIE_HTTP_STATUS: get('JWT_COOKIE_HTTP_STATUS').default('true').asBool(),
 	JWT_COOKIE_SECURITY: get('JWT_COOKIE_SECURITY').default('true').asBool(),
 	
 	// About OTP
-	OTP_MAX_AGE: get('OTP_MAX_AGE').default(100000).asInt(),
+	OTP_MAX_AGE: get('OTP_MAX_AGE').default(900000).asInt(),
 	
 	// About HSTS
-	HSTS_MAX_AGE: get('HSTS_MAX_AGE').default(100000).asInt(),
+	HSTS_MAX_AGE: get('HSTS_MAX_AGE').default(63072000).asInt(),
 
 	// # configuration of mail sender
 	MAIL_HOST: get('MAIL_HOST').default("gmail").asString(),
-	MAIL_ADDRESS: get('MAIL_ADDRESS').default("address@gmail.com").asString(),
-	MAIL_PASSWORD: get('MAIL_PASSWORD').default("password").asString(),
-	MAIL_PORT: get('MAIL_PORT').required().asPortNumber(),
-	MAIL_SECURITY: get('MAIL_SECURITY').default("false").asBool(),
+	MAIL_ADDRESS: get('MAIL_ADDRESS').required().asString(),
+	MAIL_PASSWORD: get('MAIL_PASSWORD').required().asString(),
+	MAIL_PORT: get('MAIL_PORT').default(465).asPortNumber(),
+	MAIL_SECURITY: get('MAIL_SECURITY').default("true").asBool(),
 
 	// # Configuration of S3 KEYS
-	AWS_ACCESS_KEY_ID: get('AWS_ACCESS_KEY_ID').default("your_access_key").asString(),
-	AWS_SECRET_ACCESS_KEY: get('AWS_SECRET_ACCESS_KEY').default("your_secret_key").asString(),
-	AWS_REGION: get('AWS_REGION').default("your_region").asString(),
-	AWS_BUCKET_NAME: get('AWS_BUCKET_NAME').default("your_bucket_name").asString(),
+	AWS_ACCESS_KEY_ID: get('AWS_ACCESS_KEY_ID').required().asString(),
+	AWS_SECRET_ACCESS_KEY: get('AWS_SECRET_ACCESS_KEY').required().asString(),
+	AWS_BUCKET_NAME: get('AWS_BUCKET_NAME').required().asString(),
+	AWS_REGION: get('AWS_REGION').default("us-east-1 ").asString(),
 
-	MINIO_ROOT_USER: get('MINIO_ROOT_USER').default("user-root").asString(),
-	MINIO_ROOT_PASSWORD: get('MINIO_ROOT_PASSWORD').default("user-password").asString(),
+	MINIO_ROOT_USER: get('MINIO_ROOT_USER').required().asString(),
+	MINIO_ROOT_PASSWORD: get('MINIO_ROOT_PASSWORD').required().asString(),
 	MIMIO_URL: get('MIMIO_URL').default("http://localhost:9000/").asUrlString(),
 };
-
-export const CONNECTION_STRING = `mongodb+srv://${envs.MONGO_INITDB_ROOT_USERNAME}:${envs.MONGO_INITDB_ROOT_PASSWORD}@${envs.MONGO_DB_CLUSTER_URL}/${envs.MONGO_DB_NAME}?authSource=admin`;
