@@ -26,6 +26,7 @@ export interface IUpdateEmployee {
     salary?: number;
     role?: RoleUser;
     profileImage?: string;
+    updatedAt?: Date;
 }
 export interface Otp {
     code: string;

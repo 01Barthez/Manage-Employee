@@ -179,18 +179,18 @@ const attendanceControllers = {
                     totalAbscenceHours = Math.min(newAbscencesHours + previousAbscence.absenceHours, HOURS_OF_WORKS);
 
                     // update abscence hours
-                    await prisma.absence.update({
+                    await prisma.absence.upsert({
                         where: {
                             absence_id: previousAbscence.absence_id
                         },
-                        data: { employeeID, date: dateOfToday, absenceHours: totalAbscenceHours }
-                    })
-                } else {
-                    totalAbscenceHours = newAbscencesHours;
-
-                    // create abscence hours
-                    await prisma.absence.create({
-                        data: { employeeID, date: dateOfToday, absenceHours: totalAbscenceHours }
+                        update: {
+                            absenceHours: totalAbscenceHours
+                        },
+                        create: {
+                            employeeID,
+                            date: dateOfToday,
+                            absenceHours: totalAbscenceHours
+                        }
                     })
                 }
             }

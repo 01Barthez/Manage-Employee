@@ -14,69 +14,136 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//? Gestion des enregistrement et mises a jour des employee
 model Employee {
-  employee_id String @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String @unique
-  password    String
-  profileImage String?
-  
-  otp      Otp?
-  verified Boolean @default(false)
+  employee_id  String  @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String  @unique
+  password     String
+  profileImage String? @map("profile") // Lien de la photo de profile de l'employé
 
-  post   String
-  salary Int
-  
-  isComeAndBack Boolean @default(false)
+  otp      Otp? // Cote OTP de verification
+  verified Boolean @default(false) // Savoir si un employee a fait validé son code OTP
 
-  //each user can have one or many attendances
-  attendances Attendance[]
+  post   String // Post occupé dans l'organisation / l'entreprise
+  salary Int // Salaire de l'employé
 
-  //each user can have one or many absences
-  absences Absence[]
+  isComeAndBack Boolean @default(false) @map("status") // Savoir si un employee a ete present
 
-  role RoleUser @default(user)
+  attendances Attendance[] //each employee can have one or many attendances
+  absences    Absence[] //each employee can have one or many absences
+  bonus       Bonus[] // employee can have Bonus for his exceptional worked
+  monthSalary PayRoll[] // Pour stocker toutes les infos a la fin du mois sur le salaire et les adjustement faites
+
+  role RoleUser @default(User)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt DateTime? // Pour appliquer le deleted soft
+
+  @@index([verified])
+  @@index([isComeAndBack])
+  @@index([deletedAt])
 }
 
+//? Gestion des Presences des employee
 model Attendance {
   attendance_id String @id @default(auto()) @map("_id") @db.ObjectId
 
   // Relationship between the employee and his attendance 
-  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade)
-  employeeID String   @db.ObjectId
+  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade, onUpdate: Cascade)
+  employeeID String   @db.ObjectId // ID de d'employee enregistré
 
-  date DateTime @default(now())
+  status AttendenceStatus // "Present" | "Retard" | "Absent" ...
+  date   DateTime         @default(now()) @map("Date_day") @db.Date
 
-  startTime DateTime
-  endTime   DateTime?
+  reason String? // Reason de l'abscence si nécessaire | ex: Maladie... Congée...
+
+  startTime   DateTime // Heure du début des avtivité
+  endTime     DateTime? // Heure de fin des avtivité
+  hoursWorked Int? // nombre d'heure de travail par jour
+
+  @@index([employeeID, date])
 }
 
+//? Gestion des Abscences des employee
 model Absence {
   absence_id String @id @default(auto()) @map("_id") @db.ObjectId
 
   // Relationship between the employee and his attendance 
-  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade)
-  employeeID String   @db.ObjectId
+  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade, onUpdate: Cascade)
+  employeeID String   @db.ObjectId // id de l'employee a traité
 
-  date         DateTime @default(now())
-  absenceHours Int      @default(1)
+  date         DateTime @default(now()) @map("Date_day") @db.Date
+  absenceHours Int // Nombre d'heure d'abscence 
+
+  @@index([employeeID, date])
 }
 
-model blacklist {
+model Bonus {
+  bonus_id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationship between the employee and his attendance 
+  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade, onUpdate: Cascade)
+  employeeID String   @db.ObjectId // id de l'employee a traité
+
+  amount Int
+
+  date DateTime @default(now()) @map("Date_day") @db.Date
+}
+
+model PayRoll {
+  payroll_id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationship between the employee and his attendance 
+  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade, onUpdate: Cascade)
+  employeeID String   @db.ObjectId // id de l'employee a traité
+
+  baseSalary Int
+  deduction  Int @default(0)
+  bonuses    Int @default(0)
+  totalPay   Int
+
+  dateMonth DateTime @default(now()) @map("Date_mois") @db.Date
+}
+
+//? Gestion des tokens a mettre en liste noir
+model Blacklist {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  token String
+  token String @unique // Token a blacklisté
 
   createAt DateTime @default(now())
-  expireAt DateTime 
+  expireAt DateTime
+
+  @@index([token, expireAt])
+  @@index([expireAt])
 }
 
+model Setting {
+  setting_id String   @id @default(auto()) @map("_id") @db.ObjectId
+  key        String   @unique
+  value      String
+  updatedAt  DateTime @updatedAt
+}
+
+//? Pour l'OTP
 type Otp {
   code      String
   expire_at DateTime
 }
 
+//? Different status de presence d'un employee
+enum AttendenceStatus {
+  Present
+  Retard
+  Absent
+}
+
+//? Differents role d'un utilisateur
 enum RoleUser {
-  admin
-  user
+  Admin
+  Manager
+  User
 }

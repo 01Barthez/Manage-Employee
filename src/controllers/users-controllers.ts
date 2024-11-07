@@ -90,7 +90,10 @@ const employeesControllers = {
             log.info("Utilisateur créé");
             res
                 .status(HttpCode.CREATED)
-                .json({ msg: "registration completed !" })
+                .json({
+                    success: true, 
+                    msg: "registration completed !" 
+                })
         } catch (error) {
             log.error("error when creating new employee !");
             return exceptions.serverError(res, error);
@@ -158,7 +161,10 @@ const employeesControllers = {
             log.info("employee connected...");
             res
                 .status(HttpCode.OK)
-                .json({ msg: "employee connected !" })
+                .json({
+                    success: true, 
+                    msg: "employee connected !" 
+                })
         } catch (error) {
             log.error(`Failed to connect employee !`);
             return exceptions.serverError(res, error);
@@ -205,7 +211,10 @@ const employeesControllers = {
             log.info(`employee ${employee.name} deconnected successfully !`)
             res
                 .status(HttpCode.OK)
-                .json({ msg: "employee disconnected !" })
+                .json({
+                    success: true, 
+                    msg: "employee disconnected !" 
+                })
         } catch (error) {
             log.error("error occured when try to deconnect employee !")
             return exceptions.serverError(res, error);
@@ -241,7 +250,11 @@ const employeesControllers = {
             log.info("success operation !")
             res
                 .status(HttpCode.OK)
-                .json({ msg: infoemployee })
+                .json({
+                    success: true, 
+                    msg:"success operation" , 
+                    data: infoemployee 
+                })
         } catch (error) {
             log.error("error occured when try to consult employee !")
             return exceptions.serverError(res, error);
@@ -266,7 +279,11 @@ const employeesControllers = {
             log.info("success operation !")
             res
                 .status(HttpCode.OK)
-                .json({ msg: employees })
+                .json({
+                    success: true, 
+                    msg: "success operation", 
+                    data: employees 
+                })
         } catch (error) {
             log.error("error occured when try to fetch all employees !")
             return exceptions.serverError(res, error);
@@ -316,6 +333,9 @@ const employeesControllers = {
             }
             log.info("Information(s) entrées...");
 
+            // On ajoute la date de mise à jour
+            updateData.updatedAt = new Date();
+
             // Vérifier si le nouvel email est déjà utilisé par un autre utilisateur
             if (email && email !== employee.email) {
                 const emailExists = await prisma.employee.findUnique({
@@ -344,8 +364,12 @@ const employeesControllers = {
             // Return success message
             log.info("all is done !");
             res
-                .status(HttpCode.CREATED)
-                .json({ msg: `${employee.name} has been modified successfuly. It's become:`, updateemployee })
+                .status(HttpCode.OK)
+                .json({
+                    success: true, 
+                    msg: `${employee.name} has been modified successfuly`, 
+                    data: updateemployee
+                })
         } catch (error) {
             log.error("error occured when try to update employee !")
             return exceptions.serverError(res, error);
@@ -412,7 +436,10 @@ const employeesControllers = {
             log.info(`employee ${deleteemployee.name} deleted successfully;`)
             res
                 .status(HttpCode.OK)
-                .json({ msg: `${deleteemployee.name} has been successfuly deleted!` })
+                .json({
+                    success: true, 
+                    msg: `${deleteemployee.name} has been successfuly deleted!` 
+                })
         } catch (error) {
             log.error(`Error when deleting employee!`)
             return exceptions.serverError(res, error);
@@ -473,7 +500,10 @@ const employeesControllers = {
             log.info("Password updated !");
             res
                 .status(HttpCode.OK)
-                .json({ msg: `password successfully changed!` })
+                .json({
+                    success: true, 
+                    msg: `password successfully changed!` 
+                })
         } catch (error) {
             log.error("error occured when try to change employee password !")
             return exceptions.serverError(res, error);
@@ -520,7 +550,10 @@ const employeesControllers = {
             log.info("password reset !")
             res
                 .status(HttpCode.OK)
-                .json({ msg: `password successfully changed!` })
+                .json({
+                    success: true, 
+                    msg: `password successfully changed!` 
+                })
         } catch (error) {
             log.error("error occured when try to reset employee password !")
             return exceptions.serverError(res, error);
@@ -583,8 +616,10 @@ const employeesControllers = {
             log.info("Otp verified ...")
             res
                 .status(HttpCode.OK)
-                .json({ msg: "Otp verified !" });
-
+                .json({
+                    success: true, 
+                    msg: "Otp verified !" 
+                });
         } catch (error) {
             log.error("error occured when try to verified otp !")
             return exceptions.serverError(res, error);
@@ -648,13 +683,16 @@ const employeesControllers = {
                     otp: otp,
                 }
             )
-            log.info("otp send to employee...")
-
+            log.info("otp send to employee...");
+ 
             // Return success message
             log.info("operation completed...")
             res
                 .status(HttpCode.CREATED)
-                .json({ msg: "OTP regenerer !" })
+                .json({
+                    success: true, 
+                    msg: "OTP regenerer !" 
+                })
         } catch (error) {
             log.error("error occured when try to resend employee otp !")
             return exceptions.serverError(res, error);

@@ -5,27 +5,27 @@ import log from "@src/core/config/logger";
 const exceptions = {
     badRequest: (res: Response, msg: string) => {
         res.status(HttpCode.BAD_REQUEST)
-            .json({msg: msg})
+            .json({success: false, msg: msg})
     },
 
     notFound : (res: Response, msg: string) => {
         res.status(HttpCode.NOT_FOUND)
-            .json({msg: msg})
+            .json({success: false, msg: msg})
     },
 
     conflict : (res: Response, msg: string) => {
         res.status(HttpCode.CONFLICT)
-            .json({msg: msg})
+            .json({success: false, msg: msg})
     },
 
     forbiden : (res: Response, msg: string) => {
         res.status(HttpCode.FORBIDDEN)
-            .json({msg: msg})
+            .json({success: false, msg: msg})
     },
 
     unauthorized : (res: Response, msg: string) => {
         res.status(HttpCode.UNAUTHORIZED)
-            .json({msg: msg})
+            .json({success: false, msg: msg})
     },
 
     serverError : (res: Response, error: unknown) => {
@@ -35,7 +35,7 @@ const exceptions = {
         });
         res
             .status(HttpCode.INTERNAL_SERVER_ERROR)
-            .json({msg: messageError})
+            .json({success: false, msg: messageError})
     }
 }
 

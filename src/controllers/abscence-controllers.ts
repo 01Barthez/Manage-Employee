@@ -109,8 +109,8 @@ const abscencesControllers = {
 
             await prisma.absence.deleteMany({
                 where: {
-                    date: dateOfToday,
-                    employeeID
+                    employeeID,
+                    date: dateOfToday
                 }
             })
             log.info("Abscence of the day of the employee delete successfully");

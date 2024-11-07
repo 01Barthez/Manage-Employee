@@ -1,8 +1,12 @@
 import winston, { createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import { envs } from './env';
+import 'winston-mongodb'
 
 const { colorize, align } = winston.format;
+
+// Definir le niveau de log en fonction de l'environement... Ceci pour filtrer certains log et ne pas les envoyer en production 
+const logLevel = envs.NODE_ENV === 'production' ? 'warn' : 'debug';
 
 // Fonction de configuration pour la rotation quotidienne des fichiers de logs
 const createTransport = (filename: string, level: string, maxFiles: number) => {
@@ -13,11 +17,8 @@ const createTransport = (filename: string, level: string, maxFiles: number) => {
         maxSize: '30m', // Taille maximale du fichier de log
         maxFiles: `${maxFiles}d`, // Nombre maximum de jours à conserver
         level // Niveau de log (si spécifié)
-    });
+    }); 
 };
-
-// Definir le niveau de log en fonction de l'environement... Ceci pour filtrer certains log et ne pas les envoyer en production 
-const logLevel = envs.NODE_ENV === 'production' ? 'info' : 'debug';
 
 // Transporteur pour les log généraux
 const transport = createTransport('application', 'info', 14);
@@ -30,6 +31,25 @@ const debugTransport = createTransport('debugs', 'debug', 21);
 
 // Transporteur pour les log d'erreur
 const errorTransport = createTransport('errors', 'error', 30);
+
+
+// Configuration du transporteur MongoDB
+const mongoTransport = new transports.MongoDB({
+    db: envs.DATABASE_URL, // URL de connexion à la base de données
+    options: {
+        maxPoolSize: 200, // nombre de pool de connion simultanée sur mongo
+    }, 
+    collection: 'Log', // Collection MongoDB où les logs seront enregistrés
+    level: logLevel, // Niveau de log en fonction de l'environnement
+    format: format.combine(
+        format.timestamp(),
+        format.json() // Stockage des logs au format JSON dans MongoDB pour une meilleure lisibilité
+    ),
+    tryReconnect: true, // Tente de se reconnecter en cas de perte de connexion
+    capped: true, // Utilise un collection capped pour limiter la taille et la gestion des logs
+    cappedSize: 20000000, // Taille maximale de la collection en octets (ici 20 Mo)
+    cappedMax: 1500, // Nombre maximal de documents (ici 1000 documents)
+});
 
 /**
  * Crée un logger Winston configuré pour enregistrer les logs dans des fichiers avec rotation quotidienne.
@@ -74,12 +94,18 @@ const log = createLogger({
         errorTransport, // Fichier dédié pour les error avec rotation
         warnTransport, // Fichier dédié pour les warn avec rotation
         debugTransport, // Fichier dédié pour les warn avec rotation
+        ...(envs.NODE_ENV === 'production' ? [mongoTransport] : []), // Transport MongoDB uniquement en production, pour centraliser les logs d'erreurs
+        // mongoTransport, // Suvegarer les logs dans mongoDb uniwuement en production
     ],
     exceptionHandlers: [
-        new transports.File({ filename: 'logs/exceptions.log' }) // Capture les exceptions non interceptées
+        new transports.File({ filename: 'logs/exceptions.log' }), // Capture les exceptions non interceptées
+        ...(envs.NODE_ENV === 'production' ? [mongoTransport] : []), // Transport MongoDB uniquement en production, pour centraliser les logs d'erreurs
+        // mongoTransport, // Suvegarer les logs dans mongoDb uniwuement en production
     ],
     rejectionHandlers: [
-        new transports.File({ filename: 'logs/rejections.log' }) // Capture les promesses rejetées
+        new transports.File({ filename: 'logs/rejections.log' }), // Capture les promesses rejetées
+        ...(envs.NODE_ENV === 'production' ? [mongoTransport] : []), // Transport MongoDB uniquement en production, pour centraliser les logs d'erreurs
+        // mongoTransport, // Suvegarer les logs dans mongoDb uniwuement en production
     ]
 });
 
