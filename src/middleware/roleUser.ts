@@ -1,17 +1,18 @@
 import { NextFunction, Response } from "express";
 import exceptions from "../utils/errors/exceptions";
 import prisma from "../core/config/prismaClient";
-import { customRequest, RoleUser } from "../core/interfaces/interfaces";
+import { customRequest } from "../core/interfaces/interfaces";
 import log from "@src/core/config/logger";
+import { RoleUser } from "@prisma/client";
 
-const roleEmployee = (role: RoleUser) => {
+const roleUser = (role: RoleUser) => {
     return async (
         req: customRequest,
         res: Response,
         next: NextFunction,
     ) => {
         try {
-            // fetch employeID from authentification
+            // fetch employeID from authentication
             const employeeID = req.employee?.employee_id;
             if (!employeeID) return exceptions.unauthorized(res, "authentification error !");
 
@@ -20,7 +21,7 @@ const roleEmployee = (role: RoleUser) => {
             if (!employee) return exceptions.badRequest(res, "employee not found !");
 
             if (employee.role !== role) return exceptions.forbiden(res, "You are not allow to do this action !");
-            
+
             log.info("employee role verified !")
             next()
         } catch (error) {
@@ -29,4 +30,4 @@ const roleEmployee = (role: RoleUser) => {
     }
 }
 
-export default roleEmployee;
+export default roleUser;

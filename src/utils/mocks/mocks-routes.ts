@@ -26,6 +26,7 @@ const ROUTES = {
     },
 
     CONFIG: {
+        UPDATE: '/config/update',
         CSRF_TOKEN: '/csrf-token'
     }
 

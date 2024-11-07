@@ -45,6 +45,8 @@ model Employee {
   @@index([verified])
   @@index([isComeAndBack])
   @@index([deletedAt])
+  @@index([employee_id, deletedAt])
+  @@index([email, deletedAt])
 }
 
 //? Gestion des Presences des employee
@@ -122,16 +124,26 @@ model Blacklist {
 }
 
 model Setting {
-  setting_id String   @id @default(auto()) @map("_id") @db.ObjectId
-  key        String   @unique
+  setting_id String     @id @default(auto()) @map("_id") @db.ObjectId
+  key        KeySetting @unique
   value      String
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime   @updatedAt
 }
 
 //? Pour l'OTP
 type Otp {
   code      String
   expire_at DateTime
+}
+
+enum KeySetting {
+  max_begin_hours
+  max_end_hours
+  hours_of_works
+  days_of_works
+  salary_round_factor
+  min_salary
+  hollydays
 }
 
 //? Different status de presence d'un employee

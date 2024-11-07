@@ -8,16 +8,19 @@ import { envs } from './core/config/env';
 const swaggerDefinition = {
 	openapi: '3.0.0',
 	info: {
-		title: 'Template Express.js Started',
+		title: 'Worketyamo Employee Management',
 		version: '1.0.0',
-		description: 'Template pour démarrer un projet Express avec de bonnes fondations, incluant la gestion de la sécurité, la validation, l\'authentification, et plus. ',
+		description: '🌟 WorketYamo Employee Management System est une solution complète de gestion des ressources humaines conçue pour moderniser et optimiser les processus RH des entreprises de toutes tailles. Ce systeme est conçu pour optimiser le suivi des présences, la gestion des absences et le calcul des salaires en fonctions des abscences. Ce système automatisé et sécurisé aideras donc à améliorer la productivité et à réduire les coûts liés aux absences non justifiées.\nIci Sont exposé toutes les routes de l\'application',
 		contact: {
 			name: "Barthez Kenwou",
 		}
 	},
 	servers: [
 		{
-			url: `http://localhost:${envs.PORT}` // Change this to the URL of your API
+			url: `https://localhost:${envs.PORT}`,
+		},
+		{
+			url2: `http://localhost:${envs.PORT2}`
 		}
 	]
 };
