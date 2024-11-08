@@ -3,6 +3,7 @@ import { envs } from "../../core/config/env";
 import keys from "@src/core/config/key";
 import { Employee } from "@prisma/client";
 import throwError from "@src/utils/errors/throwError";
+import { IEmployeeJwt } from "@src/core/interfaces/interfaces";
 
 const userToken = {
     accessToken: (payload: Employee): string => {
@@ -16,7 +17,7 @@ const userToken = {
 
     verifyAccessToken: (token: string) => {
         try {
-            return jwt.verify(token, keys.jwt.publicKey) as Employee;
+            return jwt.verify(token, keys.jwt.publicKey) as IEmployeeJwt;
         } catch (error) {
             throwError('Failed to verify access token', error);
         }
@@ -33,7 +34,7 @@ const userToken = {
 
     verifyRefreshToken: (refreshToken: string) => {
         try {
-            return jwt.verify(refreshToken, keys.jwt.refreshPublicKey) as Employee;
+            return jwt.verify(refreshToken, keys.jwt.refreshPublicKey) as IEmployeeJwt;
         } catch (error) {
             throwError('Failed to verify refresh token', error);
         }
@@ -41,7 +42,7 @@ const userToken = {
 
     decodeToken: (token: string) => {
         try {
-            return jwt.decode(token) as Employee;
+            return jwt.decode(token) as IEmployeeJwt;
         } catch (error) {
             throwError(`Failed to decode refresh token`, error);
         }

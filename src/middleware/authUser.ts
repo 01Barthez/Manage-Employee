@@ -17,7 +17,7 @@ const authUser = async (req: customRequest, res: Response, next: NextFunction): 
         // S'il a l'access token et que c'est pas blacklisté...
         if (accessToken && !isBlackListed_accessToken) {
             try {
-                log.debug("L'utilisateur a un access token, et ce n'est pa blacklisté...");
+                log.debug("User has and access token and, isn't blacklisted ...");
 
                 // Vérifier le token d'access reçu est valide ou bien formé
                 const userData = userToken.verifyAccessToken(accessToken);
@@ -43,7 +43,7 @@ const authUser = async (req: customRequest, res: Response, next: NextFunction): 
         log.debug("On passe a la verificaion du refresh Token !");
 
         // Vérification du refresh token si le token d'accès est expiré ou absent
-        let refreshToken = req.cookies['refresh_key'];
+        const refreshToken = req.cookies['refresh_key'];
         log.debug(`refresh token recuperer des cookie`);
 
         // Verifier que le refresh token est bien recuperer, sinon renvoyé l'erreur, on ne peux continuer sans ça
@@ -79,13 +79,17 @@ const authUser = async (req: customRequest, res: Response, next: NextFunction): 
         log.debug('Nouveau access token regenerer et stoké dans le header authorisation...');
 
         // Mettre à jour le refresh token Je me dis que c'est une bonne chose pour renouveller la date d'expiration du refresh token
-        refreshToken = userToken.refreshToken(cleanUserData);
+        const newRefreshToken = userToken.refreshToken(cleanUserData);
+
+        // Blacklister l'ancien refresh token
+        await blackListToken.AddToblackList(refreshToken)
+
         res.clearCookie('refresh_key', {
             secure: envs.JWT_COOKIE_SECURITY,
             httpOnly: envs.JWT_COOKIE_HTTP_STATUS,
             sameSite: 'strict',
         });
-        res.cookie('refresh_key', refreshToken, {
+        res.cookie('refresh_key', newRefreshToken, {
             httpOnly: envs.JWT_COOKIE_HTTP_STATUS,
             secure: envs.JWT_COOKIE_SECURITY,
             maxAge: envs.JWT_COOKIE_DURATION,

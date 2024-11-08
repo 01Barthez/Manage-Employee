@@ -1,12 +1,13 @@
 import log from "@src/core/config/logger";
 import { HttpCode } from "@src/core/constant";
+import throwError from "@src/utils/errors/throwError";
 import { 
     NextFunction,
     Request,
     Response
 } from "express";
 
-const redirectURL = (req: Request, res: Response, next: NextFunction) => {
+const redirectURL = (req: Request, res: Response, next: NextFunction): void => {
     try {
         if(!req.secure){
             log.warn(`Alert: Unsecure Url: http://${req.hostname}${req.url}`)
@@ -19,8 +20,7 @@ const redirectURL = (req: Request, res: Response, next: NextFunction) => {
 
         next();
     } catch (error) {
-        log.error(`Error redirecting URL: http://${req.hostname}${req.url} !`);
-        throw new Error(`${error instanceof Error ? error.message : JSON.stringify(error)}`);
+        throwError(`Failed to redirect URL: http://${req.hostname}${req.url}`, error);
     }
 }
 

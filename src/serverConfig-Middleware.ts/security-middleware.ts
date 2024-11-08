@@ -8,9 +8,7 @@ import {
 } from './securityConfig';
 import csrfErrorHandler from '@src/middleware/csrfErrorHandler';
 
-
-
-const setupSecurity = (app: Express) => {
+const setupSecurity = (app: Express): void => {
     //? Utilisation de Helmet Pour configurer les entete http securisées
     app.use(helmet()); // Activé toutes les protections par défaut de helmet...
     app.use(helmet.hsts(hstsOption)) // Configuration HSTS (HTTP Strict Transport Security) 

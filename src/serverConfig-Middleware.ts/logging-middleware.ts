@@ -4,7 +4,7 @@ import { Express } from 'express';
 import morgan from 'morgan';
 import { morganFormat, morganOptions } from './securityConfig';
 
-const setupLogging = (app: Express) => {
+const setupLogging = (app: Express): void => {
     //? compression des requetes http
     app.use(compression());
 

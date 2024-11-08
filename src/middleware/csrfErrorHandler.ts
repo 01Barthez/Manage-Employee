@@ -1,4 +1,5 @@
 import { HttpCode } from "@src/core/constant";
+import ResponseMSG from "@src/utils/responseformat";
 import { Request, Response, NextFunction } from "express";
 
 const csrfErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -7,7 +8,7 @@ const csrfErrorHandler = (err: any, req: Request, res: Response, next: NextFunct
 
     res
         .status(HttpCode.FORBIDDEN)
-        .json({ error: 'jeton CSRF invalide.' });
+        .json(ResponseMSG('jeton CSRF invalide.'));
   };
 
   export default csrfErrorHandler

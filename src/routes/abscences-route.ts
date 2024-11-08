@@ -1,5 +1,4 @@
 import abscencesControllers from "@src/controllers/abscence-controllers";
-import { RoleUser } from "@src/core/interfaces/interfaces";
 import authUser from "@src/middleware/authUser";
 import roleEmployee from "@src/middleware/roleUser";
 import ROUTES from "@src/utils/mocks/mocks-routes";
@@ -21,7 +20,7 @@ abscence.get(
 abscence.post(
     ROUTES.ABSCENCES.DISGRACE_EMPLOYEE, 
     authUser,
-    roleEmployee(RoleUser.admin),
+    roleEmployee('Manager'),
     abscencesControllers.disgraceEmployee
 );
 

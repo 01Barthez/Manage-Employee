@@ -1,13 +1,14 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import userToken from "@src/services/jwt/jwt-functions";
+import throwError from "@src/utils/errors/throwError";
 
 
 const blackListToken = {
     AddToblackList: async (token: string) => {
         try {
             // Decoder le token pour recuperer sa date d'expiration
-            const decodeToken = userToken.decodeToken(token) as { exp?: number };
+            const decodeToken = userToken.decodeToken(token);
             if (!decodeToken) {
                 log.error("Invalid or expired tokens");
                 throw new Error("Invalid or expired tokens");
@@ -20,10 +21,7 @@ const blackListToken = {
                 return false; // Ne pas ajouter un token déjà expiré
             }
 
-            let tokenExpiredDate = new Date();
-            if (decodeToken.exp) {
-                tokenExpiredDate = new Date(decodeToken.exp * 1000)
-            }
+            const tokenExpiredDate = decodeToken.exp ? new Date(decodeToken.exp * 1000) : new Date();          
             log.debug(`creation du token`);
 
             await prisma.blacklist.create({
@@ -36,10 +34,8 @@ const blackListToken = {
             log.info(`Token added to blacklist successfully`);
             return true;
         } catch (error) {
-            log.error('Failed to blackList user token: ', {
-                message: error instanceof Error ? error.message : "Unknown error occurred",
-            });
-            throw new Error(error instanceof Error ? error.message : "Unknow error occured");
+            throwError('Failed to blackList user token', error);
+            return false;
         }
     },
 
@@ -58,15 +54,13 @@ const blackListToken = {
 
             return !!isBlackListed;
         } catch (error) {
-            log.error('Failed to check if user token is blackListed', {
-                message: error instanceof Error ? error.message : "Unknown error occurred",
-            });
-            throw new Error(error instanceof Error ? error.message : "Unknow error occured");
+            throwError('Failed to check if user token is blackListed', error);
+            return true;
         }
     },
 
     // Retirer tous les tokns qui ont expiré
-    removeExpiredTpken: async () => {
+    removeExpiredTpken: async (): Promise<void | undefined> => {
         try {
             await prisma.blacklist.deleteMany({
                 where: {
@@ -75,12 +69,9 @@ const blackListToken = {
                     }
                 }
             })
-            log.info('expired token successfull deleted !');                
+            log.info('expired token successfull deleted !');
         } catch (error) {
-            log.error('Failed to deleted expired token: ', {
-                message: error instanceof Error ? error.message : "Unknown error occurred",
-            });
-            throw new Error(error instanceof Error ? error.message : "Unknow error occured");
+            throwError('Failed to deleted expired token', error);
         }
     }
 }

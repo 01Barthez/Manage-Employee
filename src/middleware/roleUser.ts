@@ -1,26 +1,22 @@
 import { NextFunction, Response } from "express";
 import exceptions from "../utils/errors/exceptions";
-import prisma from "../core/config/prismaClient";
 import { customRequest } from "../core/interfaces/interfaces";
 import log from "@src/core/config/logger";
 import { RoleUser } from "@prisma/client";
+import fetchEmployee from "@src/functions/fetchEmployeeExist";
 
 const roleUser = (role: RoleUser) => {
-    return async (
-        req: customRequest,
-        res: Response,
-        next: NextFunction,
-    ) => {
+    return async (req: customRequest, res: Response, next: NextFunction) => {
         try {
-            // fetch employeID from authentication
-            const employeeID = req.employee?.employee_id;
-            if (!employeeID) return exceptions.unauthorized(res, "authentification error !");
+            // Check if employee exist and fetch his data
+            const employee = await fetchEmployee(req, res);
 
-            // Check if employee employee exist
-            const employee = await prisma.employee.findUnique({ where: { employee_id: employeeID } })
-            if (!employee) return exceptions.badRequest(res, "employee not found !");
-
-            if (employee.role !== role) return exceptions.forbiden(res, "You are not allow to do this action !");
+            // Si le role entrer est admin alors seul
+            if (role === 'Admin') {
+                if (employee?.role !== 'Admin') return exceptions.forbiden(res, "You are not allow to do this action !");
+            } else if (role === 'Manager') {
+                if (employee?.role !== 'Admin' && employee?.role !== 'Manager') return exceptions.forbiden(res, "You are not allow to do this action !");
+            }
 
             log.info("employee role verified !")
             next()

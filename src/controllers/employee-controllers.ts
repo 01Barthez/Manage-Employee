@@ -5,7 +5,6 @@ import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
 import blackListAccessAndRefresToken from "@src/functions/blackListAccessAndRefresToken";
 import fetchEmployee from "@src/functions/fetchEmployeeExist";
-import uploadImage from "@src/functions/uploadImage";
 import employeeToken from "@src/services/jwt/jwt-functions";
 import sendMail from "@src/services/mail/sendMail/send-mail";
 import { comparePassword, hashText } from "@src/services/password/crypt-password";
@@ -24,6 +23,7 @@ import {
     IResendOTP, 
     IUpdateEmployee 
 } from "@src/core/interfaces/interfaces";
+import uploadImageToCloud from "@src/services/upload/uploadImage";
 
 
 const employeesControllers = {
@@ -66,7 +66,7 @@ const employeesControllers = {
             log.info("code OTP généré...");
 
             // sauvegarder l'image et recuperer le lien
-            const profileUrl = uploadImage(req);
+            const profileUrl = uploadImageToCloud(req);
             log.info(`url de la photo de profile: ${profileUrl}`);
 
             const newemployee = await prisma.employee.create({
@@ -309,7 +309,9 @@ const employeesControllers = {
             
             const employees = await prisma.employee.findMany({
                 where: {
-                    deletedAt: null
+                    deletedAt: {
+                        not: null
+                    }
                 },
                 select: {
                     name: true,
@@ -359,7 +361,7 @@ const employeesControllers = {
             if (role) updateData.role = role;
 
             // sauvegarder l'image et recuperer le lien
-            const profileUrl = uploadImage(req);
+            const profileUrl = uploadImageToCloud(req);
             log.info(`url de la photo de profile: ${profileUrl}`);
 
             if (profileUrl && profileUrl.length > 5) updateData.profileImage = profileUrl;

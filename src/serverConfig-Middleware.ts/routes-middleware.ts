@@ -9,7 +9,7 @@ import employee from '@src/routes/users-route';
 
 
 //? program routes
-const setupRoutes = (app: Express) => {
+const setupRoutes = (app: Express): void => {
     app.use(
         "/employees",
         rateLimitingSubRoute,

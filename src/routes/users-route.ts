@@ -1,98 +1,119 @@
-import usersControllers from '@src/controllers/users-controllers';
-import authUser from '@src/middleware/authUser';
-import { upload, handleMulterErrors } from "@src/middleware/upload-file";
-import { validate, validator } from '@src/services/validator/validator';
-import ROUTES from '@src/utils/mocks/mocks-routes';
-import { Router } from 'express';
+import employeesControllers from "@src/controllers/employee-controllers";
+import authUser from "@src/middleware/authUser";
+import roleUser from "@src/middleware/roleUser";
+import handleMulterErrors from "@src/services/upload/handleEror";
+import uploadImage from "@src/services/upload/upload-file";
+import { validate } from "@src/services/validator/validate";
+import { validator } from "@src/services/validator/validator";
+import ROUTES from "@src/utils/mocks/mocks-routes";
+import { Router } from "express";
+
 
 const employee: Router = Router();
 
 //? Inscription of new employee
 employee.post(
     ROUTES.USER.INSCRIPTION,
-    upload.single('profile'),
+    uploadImage.single('profile'),
     handleMulterErrors,
-    validator.validateEmployee, 
+    validator.DataInscription, 
     validate,
-    usersControllers.inscription
+    employeesControllers.inscription
 );
 
 //? Connexion of user 
 employee.post(
     ROUTES.USER.CONNEXION,
-    validator.validateEmail,
+    validator.DataConnexion,
     validate,
-    usersControllers.connexion
+    employeesControllers.connexion
 );
 
 //? Deconnexion of user
 employee.post(
     ROUTES.USER.DECONNEXION,
     authUser,
-    usersControllers.deconnexion
+    employeesControllers.deconnexion
 );
 
 //? consultation of all users
 employee.get(
     ROUTES.USER.GET_USER,
-    usersControllers.consulteEmployee
+    employeesControllers.consultEmployee
 );
 
 //? consultation of all employees
 employee.get(
     ROUTES.USER.GET_ALL_USER,
-    usersControllers.consulteAllEmployees
+    validator.DataPagination,
+    validate,
+    employeesControllers.consultAllEmployees
+);
+
+//? consultation of all employees
+employee.get(
+    ROUTES.USER.GET_ALL_DELETED,
+    validator.DataPagination,
+    validate,
+    employeesControllers.consultAllDeletedEmployees
 );
 
 //? update user
 employee.put(
     ROUTES.USER.UPDATE_USER,
     authUser,
-    upload.single('profile'),
+    uploadImage.single('profile'),
     handleMulterErrors,
-    validator.validateUserUpdate,
+    validator.DataUpdateEmployee,
     validate,
-    usersControllers.updateEmployeeData
+    employeesControllers.updatEmployeeData
 );
 
 //? Delete user
 employee.delete(
     ROUTES.USER.DELETE_USER,
     authUser,
-    usersControllers.deleteEmployee
+    employeesControllers.deleteEmployee
+);
+
+//? clear deleted employee
+employee.delete(
+    ROUTES.USER.CLEAR_USER,
+    roleUser("Admin"),
+    employeesControllers.clearDeletedEmployee
 );
 
 //? changepassword
 employee.post(
     ROUTES.USER.CHANGE_PASSSWORD,
     authUser,
-    validator.validatePWDs,
+    validator.DataChangePassword,
     validate,
-    usersControllers.changePassword
+    employeesControllers.changePassword
 );
 
 //? reset password
 employee.post(
     ROUTES.USER.RESET_PASSSWORD,
-    validator.validatenewPWD,
+    validator.DataResetPassword,
     validate,
-    usersControllers.resetPassword
+    employeesControllers.resetPassword
 );
 
 //? verifyOTP
 employee.post(
     ROUTES.USER.VERIFY_OTP,
-    validator.validateOTP,
+    validator.DataOTP,
     validate,
-    usersControllers.verifyOtp
+    employeesControllers.verifyOtp
 );
 
 //? resendOTP
 employee.post(
     ROUTES.USER.RESEND_OTP,
-    validator.validateEmployeeEmail,
+    validator.DataEmail,
     validate,
-    usersControllers.resendOTP
+    employeesControllers.resendOTP
 );
 
 export default employee;

@@ -73,7 +73,7 @@ export const validator = {
             .escape(),
     ],
 
-    Dataemail: [
+    DataEmail: [
         ...validateEmail,
     ]
 }

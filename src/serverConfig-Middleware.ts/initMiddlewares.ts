@@ -9,7 +9,7 @@ import setupRoutes from './routes-middleware';
 import setupLogging from './logging-middleware';
 
 
-const initMiddlewares = (app: Express) => {
+const initMiddlewares = (app: Express): void => {
     //? Initialiser les middleware de sécurité de l'application
     setupSecurity(app);
 
@@ -19,6 +19,7 @@ const initMiddlewares = (app: Express) => {
     //? parser les requetes json
     app.use(express.json());
 
+    
     //? parser les requetes url encoder
     app.use(express.urlencoded({ extended: true }));
 
@@ -30,6 +31,9 @@ const initMiddlewares = (app: Express) => {
 
     //? Redirect unsecure URL: Move HTTP to HTTPS
     app.use(redirectURL);
+
+    //? Reduce fingerprinting
+    app.disable('x-powered-by')
 
     //? Initialiser les middleware de gestions de logs (morgan+winston)
     setupLogging(app);

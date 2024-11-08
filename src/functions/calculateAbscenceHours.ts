@@ -1,6 +1,7 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
-
+import throwError from "@src/utils/errors/throwError";
+import * as date from 'date-fns'
 
 /**
  * Calcule le total des heures d'absence d'un employé pour le mois en cours.
@@ -10,12 +11,14 @@ import prisma from "@src/core/config/prismaClient";
 
 const calculateAbscenceHours = async (employeeID: string): Promise<number> => {
     try {
-        // Obtenir le début et la fin du mois en cours
-        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-        const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59);
+        // Obtenir les dates de début et de fin du mois précédent
+        const now = new Date();
+        const startOfMonth = date.startOfMonth(now);
+        const endOfMonth = date.endOfMonth(now);
+        log.debug(`Debut du mois a considérer: ${startOfMonth} | Fin du mois:  ${endOfMonth}`);
 
         // Récupérer les absences de l'employé pour le mois en cours
-        const absences = await prisma.absence.findMany({
+        const absences = await prisma.absence.aggregate({
             where: {
                 employeeID: employeeID,
                 date: {
@@ -23,16 +26,16 @@ const calculateAbscenceHours = async (employeeID: string): Promise<number> => {
                     lte: endOfMonth,
                 },
             },
-            select: { absenceHours: true },
+            _sum: {
+                absenceHours: true
+            }
         });
-
-        // Calculer la somme totale des heures d'absence
-        const totalHours = absences.reduce((sum, absence) => sum + absence.absenceHours, 0);
+        const totalHours = absences._sum.absenceHours || 0;
 
         return totalHours;
     } catch (error) {
-        log.error(`Error calculating absence hours for employee ${employeeID}:`, error);
-        throw new Error("Erreur lors du calcul des heures d'absence");
+        throwError('Failed to get summary abscences hours of employee', error);
+        return 0;
     }
 }
 

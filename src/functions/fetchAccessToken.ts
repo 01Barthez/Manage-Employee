@@ -3,7 +3,6 @@ import exceptions from "@src/utils/errors/exceptions";
 import { Request, Response } from "express";
 
 
-
 const fetchAccessToken = (req: Request, res: Response): string => {
     // Recuperation de l'access token dans le header authorisatioin
     const authHeader = req.headers['authorization'];

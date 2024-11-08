@@ -14,6 +14,7 @@ export interface ITemplaSalary {
     date: string,
     name: string,
     base_salary: number,
+    total_bonus: number,
     total_abscence: number,
     final_salary: number,
 }

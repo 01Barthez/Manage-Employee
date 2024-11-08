@@ -18,7 +18,7 @@ export const MIN_VALID_SALARY = getConfig('min_valid_salary') as number;
 export const MAX_VALID_SALARY = getConfig('max_valid_salary') as number;
 
 
-export const holidays = getConfig('hollydays');
+export const holidays = getConfig('hollydays') as string[];
 
 // export const MAX_BEGIN_HOURS = 8;
 // export const MAX_END_HOURS = 20;

@@ -42,11 +42,11 @@ model Employee {
 
   deletedAt DateTime? // Pour appliquer le deleted soft
 
-  @@index([verified])
-  @@index([isComeAndBack])
   @@index([deletedAt])
+  @@index([verified, deletedAt])
   @@index([employee_id, deletedAt])
   @@index([email, deletedAt])
+  @@index([isComeAndBack, deletedAt])
 }
 
 //? Gestion des Presences des employee
@@ -57,7 +57,7 @@ model Attendance {
   employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade, onUpdate: Cascade)
   employeeID String   @db.ObjectId // ID de d'employee enregistré
 
-  status AttendenceStatus // "Present" | "Retard" | "Absent" ...
+  status AttendenceStatus @default(Present) // "Present" | "Retard" | "Absent" ...
   date   DateTime         @default(now()) @map("Date_day") @db.Date
 
   reason String? // Reason de l'abscence si nécessaire | ex: Maladie... Congée...
@@ -133,9 +133,9 @@ model Setting {
 
 //? Gestion des parametres globaux des notifs
 model TemplateEmail {
-  template_id String     @id @default(auto()) @map("_id") @db.ObjectId
-  key KeyTemplate
-  value String
+  template_id String      @id @default(auto()) @map("_id") @db.ObjectId
+  key         KeyTemplate
+  value       String
 }
 
 enum KeyTemplate {
