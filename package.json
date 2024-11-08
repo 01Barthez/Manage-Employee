@@ -1,6 +1,6 @@
 {
   "name": "express_js_template_started",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "\"Template pour lancer tout projet express avec de bonnes fondations\"",
   "main": "index.ts",
   "repository": "git@github.com:01Barthez/Express-js-Started.git",
