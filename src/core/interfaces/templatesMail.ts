@@ -1,17 +1,19 @@
-export interface ITemplateMail {
+export interface ITemplateOTP {
     date: string,
     name: string,
     content: string
 }
 
 export interface ITemplateResetPassword {
+    date: string,
     name: string,
-    content: string
 }
 
 
 export interface ITemplaSalary {
     date: string,
     name: string,
-    salary: number
+    base_salary: number,
+    total_abscence: number,
+    final_salary: number,
 }

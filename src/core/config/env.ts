@@ -42,7 +42,10 @@ export const envs = {
 	
 	// About HSTS
 	HSTS_MAX_AGE: get('HSTS_MAX_AGE').default(63072000).asInt(),
-
+	
+	// limit data size
+	MAX_LIMIT_DATA: get('MAX_LIMIT_DATA').default(100).asInt(),
+	
 	// # configuration of mail sender
 	MAIL_HOST: get('MAIL_HOST').default("gmail").asString(),
 	MAIL_ADDRESS: get('MAIL_ADDRESS').required().asString(),

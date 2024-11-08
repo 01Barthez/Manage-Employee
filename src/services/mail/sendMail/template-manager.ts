@@ -2,13 +2,13 @@ import fs from 'fs';
 import ejs from 'ejs';
 import path from 'path'
 import {
-     ITemplateMail, 
+    ITemplateOTP, 
      ITemplateResetPassword,
      ITemplaSalary
 } from '../../../core/interfaces/templatesMail';
 
 const templateManager = {
-    otp: async (templateData: ITemplateMail): Promise<string> => {
+    otp: async (templateData: ITemplateOTP): Promise<string> => {
         const templatePath = path.join(__dirname, '../templates/otp.ejs')
         const template = fs.readFileSync(templatePath, 'utf8');
         return  ejs.render(template, templateData)

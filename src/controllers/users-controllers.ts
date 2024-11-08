@@ -3,7 +3,6 @@ import { envs } from "@src/core/config/env";
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
-import { customRequest, IUpdateEmployee } from "@src/core/interfaces/interfaces";
 import blackListAccessAndRefresToken from "@src/functions/blackListAccessAndRefresToken";
 import fetchEmployee from "@src/functions/fetchEmployeeExist";
 import uploadImage from "@src/functions/uploadImage";
@@ -14,7 +13,17 @@ import generateSimpleOTP from "@src/services/password/generate-otp";
 import exceptions from "@src/utils/errors/exceptions";
 import ResponseMSG from "@src/utils/responseformat";
 import { Request, Response } from "express";
-
+import { 
+    customRequest, 
+    IDataChangePassword, 
+    IDataConnexion, 
+    IDataInscription, 
+    IDataOTP, 
+    IDataResetPassword, 
+    IPagination, 
+    IResendOTP, 
+    IUpdateEmployee 
+} from "@src/core/interfaces/interfaces";
 
 
 const employeesControllers = {
@@ -22,7 +31,7 @@ const employeesControllers = {
     inscription: async (req: Request, res: Response) => {
         try {
             // fetch data from body to create new employee
-            const { name, email, password, post, salary, role } = req.body;
+            const { name, email, password, post, salary, role } = req.body as IDataInscription;
             if (!name || !email || !password || !post || !salary) {
                 log.warn("you have to enter all fields !");
                 return exceptions.badRequest(res, "All fields are mandatory !");
@@ -51,15 +60,13 @@ const employeesControllers = {
             log.info("password hashed...");
 
             // Generer le code otp qu'on va garder
-            const otp = generateSimpleOTP();
+            const otp = generateSimpleOTP() || ``;
             const now = new Date();
-            log.debug(`date de maintenant: ${now.toISOString()} `)
             const expireOTP = new Date(now.getTime() + envs.OTP_MAX_AGE)
-            log.debug(`date d'expiration: ${expireOTP.toISOString()} `)
             log.info("code OTP généré...");
 
             // sauvegarder l'image et recuperer le lien
-            const profileUrl = await uploadImage(req);
+            const profileUrl = uploadImage(req);
             log.info(`url de la photo de profile: ${profileUrl}`);
 
             const newemployee = await prisma.employee.create({
@@ -72,7 +79,7 @@ const employeesControllers = {
                         expire_at: expireOTP
                     },
                     post,
-                    salary: parseInt(salary),
+                    salary: salary,
                     role,
                     profileImage: profileUrl
                 }
@@ -95,7 +102,7 @@ const employeesControllers = {
             log.info(`Email envoyé à l'utilisateur: ${email}`)
 
             // Return success message
-            log.info("Utilisateur créé");
+            log.info(`Employee created with ID: ${newemployee.employee_id}, OTP sent`);
             res
                 .status(HttpCode.CREATED)
                 .json(ResponseMSG("registration completed !"))
@@ -109,7 +116,7 @@ const employeesControllers = {
     connexion: async (req: Request, res: Response) => {
         try {
             // fetch data from body
-            const { email, password } = req.body;
+            const { email, password } = req.body as IDataConnexion;
 
             if (!email || !password) {
                 log.warn("you have to enter all field !");
@@ -168,7 +175,7 @@ const employeesControllers = {
             log.info("save access token in cookie...");
 
             // Return success message
-            log.info("employee connected...");
+            log.info(`employee with ID: ${employee?.employee_id}, connected successfully...`);
             res
                 .status(HttpCode.OK)
                 .json(ResponseMSG("employee connected !"))
@@ -202,7 +209,7 @@ const employeesControllers = {
             log.info(`access token remove and refresh token clear for employeeID: ${employee?.employee_id}`)
 
             // Return success message
-            log.info(`employee ${employee?.name} deconnected successfully !`)
+            log.info(`employee with ID: ${employee?.employee_id}, disconnected successfully...`)
             res
                 .status(HttpCode.OK)
                 .json(ResponseMSG("employee disconnected !"))
@@ -256,7 +263,7 @@ const employeesControllers = {
     // function to consult employees
     consultAllEmployees: async (req: Request, res: Response) => {
         try {
-            const { page = 1, limit = 10 } = req.query
+            const { page = 1, limit = 10 } = req.query as IPagination;
 
             const employees = await prisma.employee.findMany({
                 where: {
@@ -281,7 +288,50 @@ const employeesControllers = {
             log.info("fetching employees...");
 
             // Return success message
-            log.info("success operation !")
+            log.info("all employee successfully fetch !")
+            res
+                .status(HttpCode.OK)
+                .json(ResponseMSG("operation successfully", true, employees))
+        } catch (error) {
+            log.error("error occured when try to fetch all employees !")
+            return exceptions.serverError(res, error);
+        }
+    },
+
+      // function to consult all deleted employees
+      consultAllDeletedEmployees: async (req: Request, res: Response) => {
+        try {
+            const { page = 1, limit = 10 } = req.query as IPagination;
+
+            // Verified that limit is not too big and reasign it
+            const max = envs.MAX_LIMIT_DATA;
+            const take = (Number(limit) > max) ? max : Number(limit); 
+            
+            const employees = await prisma.employee.findMany({
+                where: {
+                    deletedAt: null
+                },
+                select: {
+                    name: true,
+                    email: true,
+                    profileImage: true,
+                    post: true,
+                    salary: true,
+                    createdAt: true,
+                    deletedAt: true,
+                },
+                take,
+                skip: (Number(page) - 1) * Number(limit),
+            });
+
+            if (!employees.length) {
+                log.warn(`Failed to fetch all employee !`);
+                return exceptions.notFound(res, "failed to fetch all employees !");
+            }
+            log.info("fetching employees...");
+
+            // Return success message
+            log.info("all employee successfully fetch !")
             res
                 .status(HttpCode.OK)
                 .json(ResponseMSG("operation successfully", true, employees))
@@ -298,14 +348,14 @@ const employeesControllers = {
             const employee = await fetchEmployee(req, res);
 
             // fetch data from body
-            const { name, email, post, salary, role } = req.body;
+            const { name, email, post, salary, role } = req.body as IUpdateEmployee;
             const updateData: IUpdateEmployee = {}; // Create an object to hold the fields to update
 
             // Add fields to updateData only if they are provided
             if (name) updateData.name = name;
             if (email) updateData.email = email;
             if (post) updateData.post = post;
-            if (salary) updateData.salary = parseInt(salary);
+            if (salary) updateData.salary = salary;
             if (role) updateData.role = role;
 
             // sauvegarder l'image et recuperer le lien
@@ -357,7 +407,7 @@ const employeesControllers = {
             }
 
             // Return success message
-            log.info("all is done !");
+            log.info(`employee with ID: ${employee?.employee_id}, updated successfully...`);
             res
                 .status(HttpCode.OK)
                 .json(ResponseMSG("successfull operation", true, updateEmployee))
@@ -425,7 +475,7 @@ const employeesControllers = {
             log.info(`access token remove and refresh token clear for employeeID: ${employeeID}`)
 
             // Return success message
-            log.info(`employee ${deleteemployee.name} deleted successfully;`)
+            log.info(`employee with ID: ${employee?.employee_id}, deleted successfully...`);
             res
                 .status(HttpCode.OK)
                 .json(ResponseMSG('success operation'))
@@ -468,14 +518,14 @@ const employeesControllers = {
             // Check if employee exist and fetch his data
             const employee = await fetchEmployee(req, res);
 
-            const { oldPassword, newPassword } = req.body;
+            const { oldPassword, newPassword } = req.body as IDataChangePassword;
             if (!oldPassword || !newPassword) {
                 log.warn("you have to enter all fields !");
                 return exceptions.badRequest(res, "All fields are mandatory !");
             }
             log.info("Information(s) entrées...");
 
-            if (!(await comparePassword(oldPassword, employee.password))) {
+            if (!(await comparePassword(oldPassword, employee?.password || ''))) {
                 log.warn("Incorrect password !");
                 return exceptions.badRequest(res, "Incorrect password !");
             }
@@ -489,7 +539,10 @@ const employeesControllers = {
             log.info("Mot de passe hashé...");
 
             await prisma.employee.update({
-                where: { employee_id: employeeID },
+                where: {
+                    employee_id: employee?.employee_id,
+                    deletedAt: null
+                },
                 data: {
                     password: hashPassword,
                 }
@@ -497,16 +550,13 @@ const employeesControllers = {
 
             // BlackList the access and the refresh token of employee
             await blackListAccessAndRefresToken(req, res)
-            log.debug(`Access token and refresh token are blacklisted for: ${employee.employee_id}`);
+            log.debug(`Access token and refresh token are blacklisted for: ${employee?.employee_id}`);
 
             // Return success message
-            log.info("Password updated !");
+            log.info(`employee with ID: ${employee?.employee_id}, updated password successfully...`);
             res
                 .status(HttpCode.OK)
-                .json({
-                    success: true,
-                    msg: `password successfully changed!`
-                })
+                .json(ResponseMSG("password successfully changed!"));
         } catch (error) {
             log.error("error occured when try to change employee password !")
             return exceptions.serverError(res, error);
@@ -516,7 +566,7 @@ const employeesControllers = {
     // Reset Password
     resetPassword: async (req: Request, res: Response) => {
         try {
-            const { newpassword, email } = req.body;
+            const { newpassword, email } = req.body as IDataResetPassword;
             if (!newpassword) {
                 log.warn("you have to enter new password !");
                 return exceptions.badRequest(res, "new password is mandatory !");
@@ -524,7 +574,12 @@ const employeesControllers = {
             log.info("Information(s) entrées pour le reset du password...");
 
             // check if employee exist
-            const employee = await prisma.employee.findUnique({ where: { email } });
+            const employee = await prisma.employee.findUnique({ 
+                where: { 
+                    email, 
+                    deletedAt: null
+                },
+            });
             if (!employee) {
                 log.warn(`employee not found: is it the email is correct ? email: ${email}`);
                 return exceptions.notFound(res, "employee not found !");
@@ -539,7 +594,10 @@ const employeesControllers = {
             log.info("Mot de passe hashé...");
 
             await prisma.employee.update({
-                where: { email },
+                where: { 
+                    email, 
+                    deletedAt: null
+                },
                 data: {
                     password: hashPassword,
                 }
@@ -550,13 +608,10 @@ const employeesControllers = {
             log.debug(`Access token and refresh token are blacklisted for: ${employee.employee_id}`);
 
             // Return success message
-            log.info("password reset !")
+            log.info(`employee with ID: ${employee.employee_id}, reset Password successfully...`);
             res
                 .status(HttpCode.OK)
-                .json({
-                    success: true,
-                    msg: `password successfully changed!`
-                })
+                .json(ResponseMSG("password successfully reset"))
         } catch (error) {
             log.error("error occured when try to reset employee password !")
             return exceptions.serverError(res, error);
@@ -566,7 +621,7 @@ const employeesControllers = {
     // Verified OTP
     verifyOtp: async (req: Request, res: Response) => {
         try {
-            const { email, otp } = req.body;
+            const { email, otp } = req.body as IDataOTP;
             if (!email || !otp) {
                 log.warn("you have to enter email and otp !");
                 return exceptions.badRequest(res, "email and otp are mandatory !");
@@ -574,7 +629,12 @@ const employeesControllers = {
             log.info("Information(s) ded verification d'otp entrées...");
 
             // check if employee exist
-            const employee = await prisma.employee.findUnique({ where: { email } });
+            const employee = await prisma.employee.findUnique({ 
+                where: { 
+                    email, 
+                    deletedAt: null
+                },
+            });
             if (!employee) {
                 log.warn(`employee not found: is it the email is correct ? Email: ${email}`);
                 return exceptions.notFound(res, "employee not found !");
@@ -607,8 +667,9 @@ const employeesControllers = {
 
             // Invalid status
             await prisma.employee.update({
-                where: {
-                    email
+                where: { 
+                    email, 
+                    deletedAt: null
                 },
                 data: {
                     verified: true,
@@ -616,13 +677,10 @@ const employeesControllers = {
                 }
             });
 
-            log.info("Otp verified ...")
+            log.info(`employee with email: ${email}, successfully verified OTP...`);
             res
                 .status(HttpCode.OK)
-                .json({
-                    success: true,
-                    msg: "Otp verified !"
-                });
+                .json(ResponseMSG("Otp successfully verified"));
         } catch (error) {
             log.error("error occured when try to verified otp !")
             return exceptions.serverError(res, error);
@@ -632,7 +690,7 @@ const employeesControllers = {
     // Resend OTP to the employee
     resendOTP: async (req: Request, res: Response) => {
         try {
-            const { email } = req.body;
+            const { email } = req.body as IResendOTP;
             if (!email) {
                 log.warn("you have to enter email !");
                 return exceptions.badRequest(res, "email is mandatory !");
@@ -640,7 +698,12 @@ const employeesControllers = {
             log.info("email entrée pour le renvoi d'otp...");
 
             // check if employee exist
-            const employee = await prisma.employee.findUnique({ where: { email } });
+            const employee = await prisma.employee.findUnique({ 
+                where: { 
+                    email, 
+                    deletedAt: null
+                },
+            });
             if (!employee) {
                 log.warn(`employee not found: is it the email is correct ? Email: ${email}`);
                 return exceptions.notFound(res, "employee not found !");
@@ -654,15 +717,15 @@ const employeesControllers = {
             }
             log.info("employee has not verified before...");
 
-
-            const otp = generateSimpleOTP();
+            const otp = generateSimpleOTP() || '';
             const now = new Date();
-            const expireOTP = new Date(now.getTime() + 10 * 60 * 1000)
+            const expireOTP = new Date(now.getTime() + envs.OTP_MAX_AGE)
             log.info("new OTP generated !")
 
             const newemployee = await prisma.employee.update({
-                where: {
-                    email
+                where: { 
+                    email, 
+                    deletedAt: null
                 },
                 data: {
                     otp: {
@@ -678,7 +741,7 @@ const employeesControllers = {
 
             sendMail(
                 newemployee.email, // Receiver Email
-                '*********', // Subjet
+                'Nouveau Code de connexion', // Subjet
                 'otp', // Template
                 { // Template Data
                     date: now,
@@ -689,13 +752,10 @@ const employeesControllers = {
             log.info("otp send to employee...");
 
             // Return success message
-            log.info("operation completed...")
+            log.info(`employee with email: ${email}, received new OTP successfully...`);
             res
-                .status(HttpCode.CREATED)
-                .json({
-                    success: true,
-                    msg: "OTP regenerer !"
-                })
+                .status(HttpCode.OK)
+                .json(ResponseMSG("Otp successfully generate"))
         } catch (error) {
             log.error("error occured when try to resend employee otp !")
             return exceptions.serverError(res, error);

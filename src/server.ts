@@ -1,5 +1,6 @@
 import express from 'express';
 import https from 'https';
+import './servicesConfig/loadData';
 import initMiddlewares from './serverConfig-Middleware.ts/initMiddlewares';
 import startJobs from './services/jobs/allJob';
 import { setupSwagger } from './swagger';

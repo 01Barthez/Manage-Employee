@@ -19,6 +19,8 @@ export const loadConfig = async () => {
     if (!configCache['max_end_hours']) configCache['max_end_hours'] = 9;
     if (!configCache['min_salary']) configCache['min_salary'] = 10000;
     if (!configCache['salary_round_factor']) configCache['salary_round_factor'] = 500;
+    if (!configCache['min_valid_salary']) configCache['min_valid_salary'] = 5000;
+    if (!configCache['max_valid_salary']) configCache['max_valid_salary'] = 5000000;
 
     // Ajouter les jours fériées par défault
     if (!configCache['hollydays']) configCache['hollydays'] = [

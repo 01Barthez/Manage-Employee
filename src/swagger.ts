@@ -13,6 +13,14 @@ const swaggerDefinition = {
 		description: '🌟 WorketYamo Employee Management System est une solution complète de gestion des ressources humaines conçue pour moderniser et optimiser les processus RH des entreprises de toutes tailles. Ce systeme est conçu pour optimiser le suivi des présences, la gestion des absences et le calcul des salaires en fonctions des abscences. Ce système automatisé et sécurisé aideras donc à améliorer la productivité et à réduire les coûts liés aux absences non justifiées.\nIci Sont exposé toutes les routes de l\'application',
 		contact: {
 			name: "Barthez Kenwou",
+			email: "kenwoubarthez@gmail.com",
+			phone: "+237 655 646 688",
+			address: {
+				street: "",
+				city: "Yaounde",
+				state: "Centre",
+				country: "Cameroun"
+			}
 		}
 	},
 	servers: [

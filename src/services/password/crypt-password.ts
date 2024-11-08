@@ -1,7 +1,7 @@
-import log from '@src/core/config/logger';
+import throwError from '@src/utils/errors/throwError';
 import bcrypt from 'bcrypt'
 
-const hashText = async (plainText: string): Promise<string> => {
+const hashText = async (plainText: string): Promise<string | undefined> => {
     try {
         const getRounds = 10;
         const salt = await bcrypt.genSalt(getRounds);
@@ -9,14 +9,17 @@ const hashText = async (plainText: string): Promise<string> => {
 
         return hashPassword;
     } catch (error) {
-        log.error(`erreur lors du hashage du mot de Passe: ${error}`);
-        throw new Error(`Failed to hash password ${error}`);
+        throwError("Failed to hash password", error);
     }
 }
 
-const comparePassword = async (comparePlainText: string, compareHashPassword: string) => {
-    const resultat = await bcrypt.compare(comparePlainText, compareHashPassword);
-    return resultat;
+const comparePassword = async (comparePlainText: string, compareHashPassword: string): Promise<boolean | undefined> => {
+    try {        
+        const resultat = await bcrypt.compare(comparePlainText, compareHashPassword);
+        return resultat;
+    } catch (error) {
+        throwError("Failed to compare password", error);
+    }
 }
 
 export { hashText, comparePassword };

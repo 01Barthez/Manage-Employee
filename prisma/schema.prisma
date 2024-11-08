@@ -123,11 +123,29 @@ model Blacklist {
   @@index([expireAt])
 }
 
+//? Gestion des parametres globaux de l'appli
 model Setting {
   setting_id String     @id @default(auto()) @map("_id") @db.ObjectId
   key        KeySetting @unique
   value      String
   updatedAt  DateTime   @updatedAt
+}
+
+//? Gestion des parametres globaux des notifs
+model TemplateEmail {
+  template_id String     @id @default(auto()) @map("_id") @db.ObjectId
+  key KeyTemplate
+  value String
+}
+
+enum KeyTemplate {
+  logo
+  facebookLink
+  linkedinLink
+  githubLink
+  privacyTerms
+  urlWebsite
+  backGroundImage
 }
 
 //? Pour l'OTP
@@ -143,6 +161,8 @@ enum KeySetting {
   days_of_works
   salary_round_factor
   min_salary
+  min_valid_salary
+  max_valid_salary
   hollydays
 }
 

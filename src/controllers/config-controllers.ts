@@ -25,7 +25,7 @@ const configControllers = {
 
                 res
                     .status(HttpCode.OK)
-                    .json(ResponseMSG(true, "configuration updated successfully !"));
+                    .json(ResponseMSG("configuration updated successfully !"));
             })
         } catch (error) {
             log.error("Failed to set configuration !")
@@ -38,7 +38,7 @@ const configControllers = {
             log.info("Géneration d'un token CRSF... ");
             res
                 .status(HttpCode.OK)
-                .json(ResponseMSG(true, "CSRF token generated successfully !", req.csrfToken()));
+                .json(ResponseMSG("CSRF token generated successfully !", req.csrfToken()));
         } catch (error) {
             log.error("Failed to generated CSRF Token !")
             return exceptions.serverError(res, error);

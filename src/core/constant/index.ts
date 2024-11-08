@@ -3,15 +3,21 @@ import { getConfig } from "@src/servicesConfig/configService";
 // eslint-disable @typescript-eslint/no-magic-numbers
 export const ONE_THOUSAND = 100 as const;
 
-export const allowedExtensionsProfile = ['.jpg', '.png', '.jpeg', '.svg'];
-export const allowMimeTypeProfile = ['image/jpeg', 'image/png'];
+export const allowedExtensionsProfile: string[] = ['.jpg', '.png', '.jpeg', '.svg'];
+export const allowMimeTypeProfile: string[] = ['image/jpeg', 'image/png'];
 
-export const MAX_BEGIN_HOURS = getConfig('max_begin_hours');
-export const MAX_END_HOURS = getConfig('max_end_hours');
-export const HOURS_OF_WORKS = getConfig('hours_of_works');
-export const DAYS_OF_WORKS = getConfig('days_of_works');
-export const SALARY_ROUND_FACTOR = getConfig('salary_round_factor');
-export const MIN_SALARY = getConfig('min_salary');
+export const passwordRegex: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
+
+export const MAX_BEGIN_HOURS = getConfig('max_begin_hours')as number;
+export const MAX_END_HOURS = getConfig('max_end_hours')as number;
+export const HOURS_OF_WORKS = getConfig('hours_of_works')as number;
+export const DAYS_OF_WORKS = getConfig('days_of_works')as number;
+export const SALARY_ROUND_FACTOR = getConfig('salary_round_factor')as number;
+export const MIN_SALARY = getConfig('min_salary')as number;
+export const MIN_VALID_SALARY = getConfig('min_valid_salary') as number;
+export const MAX_VALID_SALARY = getConfig('max_valid_salary') as number;
+
+
 export const holidays = getConfig('hollydays');
 
 // export const MAX_BEGIN_HOURS = 8;
