@@ -16,8 +16,20 @@
   },
   "keywords": [
     "Barthez",
-    "WorkEtYamo, worketyamo management, employee-management",
-    "Nodejs, ExpressJs, Templates,  Prisma,  TypeScript, Docker, MongoDB, API, CRUD"
+    "WorkEtYamo", 
+    "Worketyamo Employee Management",
+    "Backend", 
+    "Nodejs", 
+    "ExpressJs",
+    "REST-API", 
+    "TypeScript", 
+    "Prisma",  
+    "Templates EJS",  
+    "Docker", 
+    "REDIS", 
+    "S3", 
+    "Minio", 
+    "MongoDB"
   ],
   "engines": {
     "node": ">=20.12.0",

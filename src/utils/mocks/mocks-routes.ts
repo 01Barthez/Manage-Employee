@@ -13,18 +13,32 @@ const ROUTES = {
         RESET_PASSSWORD: '/reset-password',
         VERIFY_OTP: '/verify-otp',
         RESEND_OTP: '/resend-otp',
+        CLEAR: '/clear',
     },
     
     ATTENDANCES: {
         CHECK_IN:  '/check-in',
         CHECK_OUT:  '/check-out',
         GET_ATTENANCES: '/:employeeID',
+        CLEAR: '/clear',
     },
     
     ABSCENCES: {
         GET_ABSCENCES: '/attendance/absences/:employeeID',
         GET_SALARY: '/salary/:employeeID',
-        DISGRACE_EMPLOYEE: '/attendance/pardon/:employeeID'
+        DISGRACE_EMPLOYEE: '/attendance/pardon/:employeeID',
+        CLEAR: '/clear',
+    },
+
+    BONUS: {
+        ADD_BONUS: '/bonus/new/:employeeID',
+        GET_BONUS: '/bonus/:employeeID',
+        CLEAR: '/bonus/clear',
+    },
+
+    ACHIEVMENTS: {
+        GET_ACHIEVMENTS: '/achievment/:employeeID',
+        CLEAR: '/achievment/clear',
     },
 
     CONFIG: {

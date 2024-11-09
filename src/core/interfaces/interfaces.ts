@@ -73,7 +73,7 @@ export interface IQueryDate {
     year?: string
 }
 
-export interface IFilterAttendance{
+export interface IFilterWithDate{
     employeeID: string;
     date?: Date;
 }

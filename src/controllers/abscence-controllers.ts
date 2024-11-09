@@ -98,5 +98,23 @@ const abscencesControllers = {
             return exceptions.serverError(res, error);
         }
     },
+
+    clearAbscences: async (_req: Request, res: Response) => {
+        try {
+            const deleteResult = await prisma.absence.deleteMany();
+
+            const deletedCount = deleteResult.count;
+            log.info(`Successfully deleted ${deletedCount} abscences'.`);
+           
+            // Return success message
+            log.info("All is ok, success !")
+            res
+                .status(HttpCode.CREATED)
+                .json(ResponseMSG(`All abscences Successfully Clear !`));
+        } catch (error) {
+            log.error("error occured when try clear abscences !")
+            return exceptions.serverError(res, error);
+        }
+    }
 }
 export default abscencesControllers;

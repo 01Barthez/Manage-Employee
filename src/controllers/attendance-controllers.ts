@@ -1,7 +1,7 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HOURS_OF_WORKS, HttpCode, MAX_BEGIN_HOURS } from "@src/core/constant";
-import { customRequest, IFilterAttendance, IPagination, IQueryDate } from "@src/core/interfaces/interfaces";
+import { customRequest, IFilterWithDate, IPagination, IQueryDate } from "@src/core/interfaces/interfaces";
 import exceptions from "@src/utils/errors/exceptions";
 import { Request, Response } from 'express';
 import * as date from 'date-fns'
@@ -9,7 +9,7 @@ import { roundedTime, roundHours } from "@src/functions/roundedHoursAndMinutes";
 import ResponseMSG from "@utils/responseformat";
 import { AttendenceStatus } from "@prisma/client";
 import { fetchEmployeeFromAuth, fetchEmployeeFromParmams } from "@src/utils/helpers/fetchEmployee";
-import * as datefn from 'date-fns'
+import DateFilter from "@src/utils/helpers/constructDateFilter";
 
 const attendanceControllers = {
     //* Saving Comming Hours
@@ -221,30 +221,11 @@ const attendanceControllers = {
             const { day, month, year } = req.query as IQueryDate
             const { page = 1, limit = 10 } = req.query as IPagination;
 
-            // Actual Date
-            let dateFilter: Date | undefined = undefined
-            const now: Date = new Date();
-
-            // Construct date dependly of parameters
-            if (day || month || year) {
-
-                dateFilter = datefn.startOfDay(now); // set to midnight
-                if (day) {
-                    // define date of the day
-                    dateFilter = datefn.setDay(dateFilter, Number(day) - 1);
-                }
-                if (month) {
-                    // define date of the month
-                    dateFilter = datefn.setMonth(dateFilter, Number(month) - 1);
-                }
-                if (year) {
-                    // define date of the year
-                    dateFilter = datefn.setYear(dateFilter, Number(year));
-                }
-            }
+            // Construct date filter
+            const dateFilter: Date | undefined = DateFilter(day, month, year);
 
             // Definit les conditions de filtre en fonction de la prsence ou non des attendences;
-            const whereClause: IFilterAttendance = {
+            const whereClause: IFilterWithDate = {
                 employeeID: employee?.employee_id
             }
             if (dateFilter) whereClause.date = dateFilter
@@ -271,6 +252,24 @@ const attendanceControllers = {
                 .json(ResponseMSG("Success Operation", true, Allattendances))
         } catch (error) {
             log.error("error occured when try consult employee attendances !");
+            return exceptions.serverError(res, error);
+        }
+    },
+
+    clearAttendances: async (_req: Request, res: Response) => {
+        try {
+            const deleteResult = await prisma.attendance.deleteMany();
+
+            const deletedCount = deleteResult.count;
+            log.info(`Successfully deleted ${deletedCount} abscences'.`);
+
+            // Return success message
+            log.info("All is ok, success !")
+            res
+                .status(HttpCode.CREATED)
+                .json(ResponseMSG(`All Bonus Successfully Clear !`));
+        } catch (error) {
+            log.error("error occured when try clear attendances !")
             return exceptions.serverError(res, error);
         }
     }

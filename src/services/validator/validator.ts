@@ -106,6 +106,23 @@ export const validator = {
         ...validatePage,
 
         ...validateLimit,
+    ],
+
+    DataBonus: [
+        body('description')
+            .exists().withMessage('description is required !')
+            .trim().withMessage('description can not be empty !')
+            .isString().withMessage('description have to be a string !')
+            .isLength({ min: 10 }).withMessage('description is too short; min: 10 !')
+            .isLength({ max: 1000 }).withMessage('description is too long: max: 1000')
+            .escape()
+        ,
+
+        body('amount')
+            .exists().withMessage('amount is required !')
+            .isInt({ min: 50, max: 5000000 })
+            .withMessage('Enter a valid amount')
+        ,
     ]
 
 }

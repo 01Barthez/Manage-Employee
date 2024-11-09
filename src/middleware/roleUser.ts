@@ -3,13 +3,13 @@ import exceptions from "../utils/errors/exceptions";
 import { customRequest } from "../core/interfaces/interfaces";
 import log from "@src/core/config/logger";
 import { RoleUser } from "@prisma/client";
-import fetchEmployee from "@src/functions/fetchEmployeeExist";
+import { fetchEmployeeFromAuth } from "@src/utils/helpers/fetchEmployee";
 
 const roleUser = (role: RoleUser) => {
     return async (req: customRequest, res: Response, next: NextFunction) => {
         try {
             // Check if employee exist and fetch his data
-            const employee = await fetchEmployee(req, res);
+            const employee = await fetchEmployeeFromAuth(req, res);
 
             // Si le role entrer est admin alors seul
             if (role === 'Admin') {

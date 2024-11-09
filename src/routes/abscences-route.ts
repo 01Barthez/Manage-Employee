@@ -24,4 +24,11 @@ abscence.post(
     abscencesControllers.resetEmployeeAbsence
 );
 
+abscence.post(
+    ROUTES.ABSCENCES.CLEAR, 
+    authUser,
+    roleEmployee('Admin'),
+    abscencesControllers.clearAbscences
+);
+
 export default abscence;

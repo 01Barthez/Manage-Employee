@@ -487,12 +487,8 @@ const employeesControllers = {
         }
     },
 
-    clearDeletedEmployee: async (req: customRequest, res: Response) => {
+    clearDeletedEmployee: async (_req: customRequest, res: Response) => {
         try {
-            // Check if employee exist and fetch his data
-            const employee = await fetchEmployeeFromAuth(req, res);
-            log.info(`Utilisateur qui fait la requete: ${employee?.name}`);
-
             // clear Delete the employee
             await prisma.employee.deleteMany({
                 where: {
@@ -760,6 +756,31 @@ const employeesControllers = {
                 .json(ResponseMSG("Otp successfully generate"))
         } catch (error) {
             log.error("error occured when try to resend employee otp !")
+            return exceptions.serverError(res, error);
+        }
+    },
+
+    clearAllEmployee: async (_req: Request, res: Response) => {
+        try {
+            const deleteResult = await prisma.employee.deleteMany({
+                where: {
+                    OR: [
+                        { role: 'User' },
+                        { role: 'Manager' }
+                    ]
+                }
+            });
+
+            const deletedCount = deleteResult.count;
+            log.info(`Successfully deleted ${deletedCount} employees with role 'User' or 'Manager'.`)
+           
+            // Return success message
+            log.info("All is ok, success !")
+            res
+                .status(HttpCode.CREATED)
+                .json(ResponseMSG(`All employee Successfully Clear !`));
+        } catch (error) {
+            log.error("error occured when try clear employee !")
             return exceptions.serverError(res, error);
         }
     }

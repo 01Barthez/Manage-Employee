@@ -37,8 +37,9 @@ const configControllers = {
         try {
             log.info("Géneration d'un token CRSF... ");
             res
-                .status(HttpCode.OK)
-                .json(ResponseMSG("CSRF token generated successfully !", req.csrfToken()));
+            .status(HttpCode.OK)
+            // @ts-expect-error: temporaly accept this error it's cause by a type of req...
+            .json(ResponseMSG("CSRF token generated successfully !", req.csrfToken())); 
         } catch (error) {
             log.error("Failed to generated CSRF Token !")
             return exceptions.serverError(res, error);

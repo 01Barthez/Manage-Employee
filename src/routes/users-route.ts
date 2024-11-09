@@ -16,7 +16,7 @@ employee.post(
     ROUTES.USER.INSCRIPTION,
     uploadImage.single('profile'),
     handleMulterErrors,
-    validator.DataInscription, 
+    validator.DataInscription,
     validate,
     employeesControllers.inscription
 );
@@ -79,6 +79,7 @@ employee.delete(
 //? clear deleted employee
 employee.delete(
     ROUTES.USER.CLEAR_USER,
+    authUser,
     roleUser("Admin"),
     employeesControllers.clearDeletedEmployee
 );
@@ -114,6 +115,14 @@ employee.post(
     validator.DataEmail,
     validate,
     employeesControllers.resendOTP
+);
+
+//? resendOTP
+employee.post(
+    ROUTES.USER.CLEAR,
+    authUser,
+    roleUser("Admin"),
+    employeesControllers.clearAllEmployee
 );
 
 export default employee;
