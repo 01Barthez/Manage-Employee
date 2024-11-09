@@ -1,12 +1,13 @@
 import { body, query } from "express-validator";
-import { envs } from "@src/core/config/env";
 import {
     validateEmail,
+    validateLimit,
     validateName,
     validateOptionalEmail,
     validateOptionalName,
     validateOptionalPost,
     validateOptionalSalary,
+    validatePage,
     validatePassword,
     validatePost,
     validateRole,
@@ -29,7 +30,7 @@ export const validator = {
     ],
 
     DataUpdateEmployee: [
-     ...validateOptionalName,
+        ...validateOptionalName,
         ...validateOptionalEmail,
         ...validateOptionalPost,
         ...validateOptionalSalary,
@@ -37,19 +38,8 @@ export const validator = {
     ],
 
     DataPagination: [
-        query('page')
-            .optional()
-            .isInt({ min: 1, max: 200 }).withMessage('given page have to be a number')
-            .isLength({ min: 1 }).withMessage('the page value is not correctly defined: min=1 !')
-            .isLength({ max: 200 }).withMessage('the page value is too big !')
-        ,
-
-        query('limit')
-            .optional()
-            .isInt().withMessage('given page have to be a number')
-            .isLength({ min: 1 }).withMessage('the limit value is not correctly defined: min=1 !')
-            .isLength({ max: envs.MAX_LIMIT_DATA }).withMessage('the limit value is too big !')
-        ,
+        ...validatePage,
+        ...validateLimit,
     ],
 
 
@@ -75,5 +65,47 @@ export const validator = {
 
     DataEmail: [
         ...validateEmail,
+    ],
+
+    DataCheckIN: [
+        body('reason')
+            .optional()
+            .trim().withMessage('reason can not be empty !')
+            .isString().withMessage('reason have to be a string !')
+            .isLength({ min: 10 }).withMessage('reason is too short; min: 10 !')
+            .isLength({ max: 200 }).withMessage('reason is too long: max: 200')
+            .escape()
+    ],
+
+    DataCheckOUT: [
+        body('accomplissement')
+            .exists().withMessage('accomplishment is required !')
+            .trim().withMessage('accomplissement can not be empty !')
+            .isString().withMessage('accomplissement have to be a string !')
+            .isLength({ min: 10 }).withMessage('accomplissement is too short; min: 10 !')
+            .isLength({ max: 1000 }).withMessage('accomplissement is too long: max: 1000')
+            .escape()
+    ],
+
+    DataAttendanceList: [
+        query('day')
+            .optional()
+            .isInt({ min: 1, max: 31 })
+            .withMessage('Enter a valid month number (between 1 and 31)'),
+
+        query('month')
+            .optional()
+            .isInt({ min: 1, max: 12 })
+            .withMessage('Enter a valid month number (between 1 and 12)'),
+
+        query('year')
+            .optional()
+            .isInt({ min: 2000, max: new Date().getFullYear() })
+            .withMessage(`Enter a valid year between 2000 and 2024 !`),
+
+        ...validatePage,
+
+        ...validateLimit,
     ]
+
 }

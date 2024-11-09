@@ -34,6 +34,7 @@ model Employee {
   absences    Absence[] //each employee can have one or many absences
   bonus       Bonus[] // employee can have Bonus for his exceptional worked
   monthSalary PayRoll[] // Pour stocker toutes les infos a la fin du mois sur le salaire et les adjustement faites
+  Achievments Achievment[] // Pour stocker les accomplissements quotidiens
 
   role RoleUser @default(User)
 
@@ -83,6 +84,19 @@ model Absence {
   @@index([employeeID, date])
 }
 
+model Achievment {
+  achievment_id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Relationship between the employee and his attendance 
+  employee   Employee @relation(fields: [employeeID], references: [employee_id], onDelete: Cascade, onUpdate: Cascade)
+  employeeID String   @db.ObjectId // id de l'employee a traité
+
+  date         DateTime @default(now()) @map("Date_day") @db.Date
+  message String // accomplissement de l'employee dans la journée
+
+  @@index([employeeID, date])
+} 
+
 model Bonus {
   bonus_id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -91,8 +105,11 @@ model Bonus {
   employeeID String   @db.ObjectId // id de l'employee a traité
 
   amount Int
+  description String
 
   date DateTime @default(now()) @map("Date_day") @db.Date
+
+  @@index([employeeID, date])
 }
 
 model PayRoll {

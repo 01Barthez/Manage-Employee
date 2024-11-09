@@ -1,10 +1,11 @@
-import { body, ValidationChain } from "express-validator";
+import { body, query, ValidationChain } from "express-validator";
 import { RoleUser } from "@prisma/client";
-import { 
-    MAX_VALID_SALARY, 
-    MIN_VALID_SALARY, 
-    passwordRegex 
+import {
+    MAX_VALID_SALARY,
+    MIN_VALID_SALARY,
+    passwordRegex
 } from "@src/core/constant";
+import { envs } from "@src/core/config/env";
 
 
 // Validation of user name
@@ -117,3 +118,21 @@ export const validateRole: ValidationChain[] = [
         })
     ,
 ];
+
+export const validatePage: ValidationChain[] = [
+    query('page')
+        .optional()
+        .isInt({ min: 1, max: 200 }).withMessage('given page have to be a number')
+        .isLength({ min: 1 }).withMessage('the page value is not correctly defined: min=1 !')
+        .isLength({ max: 200 }).withMessage('the page value is too big !')
+    ,
+];
+
+export const validateLimit: ValidationChain[] = [
+    query('limit')
+        .optional()
+        .isInt().withMessage('given page have to be a number')
+        .isLength({ min: 1 }).withMessage('the limit value is not correctly defined: min=1 !')
+        .isLength({ max: envs.MAX_LIMIT_DATA }).withMessage('the limit value is too big !')
+    ,
+]

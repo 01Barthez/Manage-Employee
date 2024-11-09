@@ -1,4 +1,4 @@
-import loadFile from "@src/functions/loadFile";
+import loadFile from "@src/utils/helpers/loadFile";
 import { envs } from "./env";
 
 const keys = {

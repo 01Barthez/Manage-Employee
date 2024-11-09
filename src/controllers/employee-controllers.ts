@@ -3,8 +3,6 @@ import { envs } from "@src/core/config/env";
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
-import blackListAccessAndRefresToken from "@src/functions/blackListAccessAndRefresToken";
-import fetchEmployee from "@src/functions/fetchEmployeeExist";
 import employeeToken from "@src/services/jwt/jwt-functions";
 import sendMail from "@src/services/mail/sendMail/send-mail";
 import { comparePassword, hashText } from "@src/services/password/crypt-password";
@@ -12,6 +10,9 @@ import generateSimpleOTP from "@src/services/password/generate-otp";
 import exceptions from "@src/utils/errors/exceptions";
 import ResponseMSG from "@src/utils/responseformat";
 import { Request, Response } from "express";
+import uploadImageToCloud from "@src/services/upload/uploadImage";
+import { fetchEmployeeFromAuth } from "@src/utils/helpers/fetchEmployee";
+import blackListAccessAndRefresToken from "@src/utils/helpers/blackListAccessAndRefresToken";
 import { 
     customRequest, 
     IDataChangePassword, 
@@ -23,7 +24,6 @@ import {
     IResendOTP, 
     IUpdateEmployee 
 } from "@src/core/interfaces/interfaces";
-import uploadImageToCloud from "@src/services/upload/uploadImage";
 
 
 const employeesControllers = {
@@ -189,7 +189,7 @@ const employeesControllers = {
     deconnexion: async (req: customRequest, res: Response) => {
         try {
             // Check if employee exist and fetch his data
-            const employee = await fetchEmployee(req, res);
+            const employee = await fetchEmployeeFromAuth(req, res);
 
             // BlackList the access and the refresh token of employee
             await blackListAccessAndRefresToken(req, res)
@@ -347,7 +347,7 @@ const employeesControllers = {
     updatEmployeeData: async (req: customRequest, res: Response) => {
         try {
             // Check if employee exist and fetch his data
-            const employee = await fetchEmployee(req, res);
+            const employee = await fetchEmployeeFromAuth(req, res);
 
             // fetch data from body
             const { name, email, post, salary, role } = req.body as IUpdateEmployee;
@@ -423,7 +423,7 @@ const employeesControllers = {
     deleteEmployee: async (req: customRequest, res: Response) => {
         try {
             // Check if employee exist and fetch his data
-            const employee = await fetchEmployee(req, res);
+            const employee = await fetchEmployeeFromAuth(req, res);
 
             // fetch employeeID to delete from params
             const { employeeID } = req.params
@@ -490,7 +490,7 @@ const employeesControllers = {
     clearDeletedEmployee: async (req: customRequest, res: Response) => {
         try {
             // Check if employee exist and fetch his data
-            const employee = await fetchEmployee(req, res);
+            const employee = await fetchEmployeeFromAuth(req, res);
             log.info(`Utilisateur qui fait la requete: ${employee?.name}`);
 
             // clear Delete the employee
@@ -518,7 +518,7 @@ const employeesControllers = {
     changePassword: async (req: customRequest, res: Response) => {
         try {
             // Check if employee exist and fetch his data
-            const employee = await fetchEmployee(req, res);
+            const employee = await fetchEmployeeFromAuth(req, res);
 
             const { oldPassword, newPassword } = req.body as IDataChangePassword;
             if (!oldPassword || !newPassword) {

@@ -66,3 +66,14 @@ export interface IDataOTP {
 export interface IResendOTP {
     email: string,
 }
+
+export interface IQueryDate {
+    day?: string, 
+    month?: string, 
+    year?: string
+}
+
+export interface IFilterAttendance{
+    employeeID: string;
+    date?: Date;
+}

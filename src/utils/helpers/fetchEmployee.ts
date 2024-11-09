@@ -3,10 +3,10 @@ import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { customRequest } from "@src/core/interfaces/interfaces";
 import exceptions from "@src/utils/errors/exceptions";
-import { Response } from "express";
+import { Request, Response } from "express";
 
 
-const fetchEmployee = async (req: customRequest, res: Response): Promise<void | Employee> => {
+export const fetchEmployeeFromAuth = async (req: customRequest, res: Response): Promise<void | Employee> => {
     // fetch employeID from authentication
     const employeeID = req.employee?.employee_id;
     if (!employeeID) {
@@ -28,7 +28,30 @@ const fetchEmployee = async (req: customRequest, res: Response): Promise<void | 
     }
     log.info("employee exist...");
 
-    return employee;
+    return employee as Employee;
 }
 
-export default fetchEmployee
+export const fetchEmployeeFromParmams = async (req: Request, res: Response): Promise<void | Employee> => {
+    const { employeeID } = req.params as { employeeID: string }
+
+    if (!employeeID) {
+        log.warn("Should provide employeeID");
+        return exceptions.badRequest(res, "No employeeID provide !");
+    }
+    log.info("employeeID is provided...");
+
+    // check if employee exist
+    const employee = await prisma.employee.findUnique({
+        where: {
+            employee_id: employeeID,
+            deletedAt: null
+        }
+    });
+    if (!employee) {
+        log.warn(`employee with id: ${employeeID} not exist !`);
+        return exceptions.notFound(res, "employee not exist !");
+    }
+    log.info("employee exist...");
+
+    return employee as Employee;
+}

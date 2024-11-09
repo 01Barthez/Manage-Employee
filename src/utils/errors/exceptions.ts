@@ -30,7 +30,7 @@ const exceptions = {
     },
 
     serverError : (res: Response, error: unknown) => {
-        const messageError = error instanceof Error ? error.message : JSON.stringify(error);
+        const messageError = `Internal server error: ${error instanceof Error ? error.message : JSON.stringify(error)}`;
         log.error('Internal server error', {
             message: messageError,
         });

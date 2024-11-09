@@ -21,7 +21,7 @@ abscence.post(
     ROUTES.ABSCENCES.DISGRACE_EMPLOYEE, 
     authUser,
     roleEmployee('Manager'),
-    abscencesControllers.disgraceEmployee
+    abscencesControllers.resetEmployeeAbsence
 );
 
 export default abscence;

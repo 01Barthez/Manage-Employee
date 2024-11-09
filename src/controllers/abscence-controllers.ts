@@ -1,42 +1,30 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
-import { 
-    DAYS_OF_WORKS, 
-    HOURS_OF_WORKS, 
-    HttpCode, MIN_SALARY, 
-    SALARY_ROUND_FACTOR 
-} from "@src/core/constant";
 import { customRequest } from "@src/core/interfaces/interfaces";
 import calculateAbscenceHours from "@src/functions/calculateAbscenceHours";
 import exceptions from "@src/utils/errors/exceptions";
+import { fetchEmployeeFromParmams } from "@src/utils/helpers/fetchEmployee";
 import { Request, Response } from "express";
+import ResponseMSG from "@src/utils/responseformat";
+import { newSalary } from "@src/functions/getUserSalary";
+import * as datefns from 'date-fns'
+import { HttpCode } from "@src/core/constant";
 
 const abscencesControllers = {
     abscencesHours: async (req: Request, res: Response) => {
         try {
-            const { employeeID } = req.params
-            if (!employeeID) {
-                log.warn("Should provide employeeID");
-                return exceptions.badRequest(res, "No employeeID provide !");
-            }
-            log.info("employeeID is provided...");
+            // Fetch employee data from params
+            const employee = await fetchEmployeeFromParmams(req, res);
+            if (!employee) return exceptions.badRequest(res, "Employee not found");
 
-            // check if employee exist
-            const employee = await prisma.employee.findUnique({ where: { employee_id: employeeID } });
-            if (!employee) {
-                log.warn(`employee with id: ${employeeID} not exist !`);
-                return exceptions.notFound(res, "employee not exist !");
-            }
-            log.info("employee exist...");
-
-            const totalHours = await calculateAbscenceHours(employeeID)
-            log.info(`Total hours of absence for employee ${employeeID} in the current month: ${totalHours}`);
+            const totalHours = await calculateAbscenceHours(employee.employee_id)
+            log.info(`Total hours of absence for employee ${employee.email} in the current month: ${totalHours}`);
 
             // Return success message
             log.info('All is ok !');
             res
                 .status(HttpCode.OK)
-                .json({ msg: totalHours })
+                .json(ResponseMSG("All is correct", true, totalHours));
         } catch (error) {
             log.error("error occured when try to get abscences of employee !")
             return exceptions.serverError(res, error);
@@ -45,88 +33,66 @@ const abscencesControllers = {
 
     abscencesAdjustments: async (req: Request, res: Response) => {
         try {
-            const { employeeID } = req.params
-            if (!employeeID) {
-                log.warn("Should provide employeeID");
-                return exceptions.badRequest(res, "No employeeID provide !");
-            }
-            log.info("employeeID is provided...");
+            // Fetch employee data from params
+            const employee = await fetchEmployeeFromParmams(req, res);
+            if (!employee) return exceptions.badRequest(res, "Employee not found");
 
-            // check if employee exist
-            const employee = await prisma.employee.findUnique({ where: { employee_id: employeeID } });
-            if (!employee) {
-                log.warn(`employee with id: ${employeeID} not exist !`);
-                return exceptions.notFound(res, "employee not exist !");
-            }
-            log.info("employee exist...");
-
-            //  Fetch hours salary
-            const totalHours = await calculateAbscenceHours(employeeID);
+            //  Fetch total hours
+            const totalHours = await calculateAbscenceHours(employee.employee_id);
             log.debug(`Total abscences Hours: ${totalHours}`);
 
             // fetch salary of this employee
             const employeeSalary = employee.salary;
-            const hoursSalary = (employeeSalary) / (HOURS_OF_WORKS * DAYS_OF_WORKS);
-            log.debug(`Employee Salary: ${employeeSalary}\n Salary By Hours: ${hoursSalary} !`);
 
-            // Amount Reduction
-            const reduction = hoursSalary * totalHours;
-            log.debug(`Montant de reduction: ${reduction}`);
-            const newSalary = Math.max(Math.round((employeeSalary - reduction) / SALARY_ROUND_FACTOR) * SALARY_ROUND_FACTOR, MIN_SALARY);
-            log.debug(`Nouveau salaire: ${newSalary}`);
+            const finalSalary = newSalary(employeeSalary, totalHours)
+            log.debug(`Nouveau salaire: ${finalSalary}`);
 
             // Return success message
             res
                 .status(HttpCode.OK)
-                .json({ msg: newSalary })
+                .json(ResponseMSG("Success operation", true, finalSalary));
         } catch (error) {
             log.error("error occured when try adjust employee salary !")
             return exceptions.serverError(res, error);
         }
     },
 
-    disgraceEmployee: async (req: customRequest, res: Response): Promise<void> => {
+    resetEmployeeAbsence: async (req: customRequest, res: Response): Promise<void> => {
         try {
-            const { employeeID } = req.params
-            if (!employeeID) {
-                log.warn("Should provide employeeID");
-                return exceptions.badRequest(res, "No employeeID provide !");
-            }
-            log.info("employeeID is provided...");
-
-            // check if employee exist
-            const employee = await prisma.employee.findUnique({ where: { employee_id: employeeID } });
-            if (!employee) {
-                log.warn(`employee with id: ${employeeID} not exist !`);
-                return exceptions.notFound(res, "employee not exist !");
-            }
-            log.info("employee exist...");
+            // Fetch employee data from params
+            const employee = await fetchEmployeeFromParmams(req, res);
+            if (!employee) return exceptions.badRequest(res, "Employee not found");
 
             // Initialise date
-            const today = new Date()
-            const dateOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+            const now = new Date()
+            const dateOfToday = datefns.startOfDay(now);
             log.debug(`Date of today: ${dateOfToday}`);
 
-            await prisma.absence.deleteMany({
-                where: {
-                    employeeID,
-                    date: dateOfToday
-                }
-            })
-            log.info("Abscence of the day of the employee delete successfully");
+            await prisma.$transaction(async (px) => {
+                await px.absence.deleteMany({
+                    where: {
+                        employeeID: employee.employee_id,
+                        date: dateOfToday
+                    }
+                })
+                log.info("Abscence of the day of the employee delete successfully");
 
-            // save the status of employee
-            await prisma.employee.update({
-                where: { employee_id: employeeID },
-                data: { isComeAndBack: true }
+                // save the status of employee
+                await px.employee.update({
+                    where: {
+                        employee_id: employee.employee_id,
+                        deletedAt: null
+                    },
+                    data: { isComeAndBack: true }
+                })
+                log.info("status of the employee update to sign");
             })
-            log.info("status of the employee update to sign");
 
             // Return success message
             log.info("All is ok, success !")
             res
                 .status(HttpCode.OK)
-                .json({ msg: `we pardon employee ${employee.name}...!` });
+                .json(ResponseMSG(`we pardon employee ${employee.name}...!`));
         } catch (error) {
             log.error("error occured when saving end of attendance !")
             return exceptions.serverError(res, error);
