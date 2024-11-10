@@ -5,18 +5,18 @@ import ROUTES from "@src/utils/mocks/mocks-routes";
 import { Router } from "express";
 
 
-const bonus = Router();
+const achievment = Router();
 
-bonus.get(
+achievment.get(
     ROUTES.ACHIEVMENTS.GET_ACHIEVMENTS, 
     achievmentsControllers.getAchievments
 );
 
-bonus.post(
+achievment.post(
     ROUTES.ACHIEVMENTS.CLEAR, 
     authUser,
     roleEmployee('Admin'),
     achievmentsControllers.clearAchievments
 );
 
-export default bonus;
+export default achievment;

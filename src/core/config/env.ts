@@ -4,11 +4,12 @@ import { get } from 'env-var';
 export const envs = {
 	//  Global Informations
 	PORT: get('PORT').default(443).asPortNumber(),
+	
 	PORT2: get('PORT2').default(3000).asPortNumber(),
 	
 	API_PREFIX: get('DEFAULT_API_PREFIX').default('/api/v1').asString(),
-	NODE_ENV: get('NODE_ENV').default('development').asString(),
 
+	NODE_ENV: get('NODE_ENV').default('development').asString(),
 	// Set Ratelimi params for App
 	MAX_GLOBAL_QUERY_NUMBER: get('MAX_GLOBAL_QUERY_NUMBER').default('100').asInt(),
 	MAX_GLOBAL_QUERY_WINDOW: get('MAX_GLOBAL_QUERY_WINDOW').default('60').asInt(),
@@ -21,7 +22,10 @@ export const envs = {
 	// About TLS Certificate
 	TLS_PRIVATE_KEY: get('TLS_PRIVATE_KEY').required().asString(),
 	TLS_CERTIFICATE: get('TLS_CERTIFICATE').required().asString(),
-
+	
+	REDIS_HOST: get('REDIS_HOST').default("localhost").asString(),
+	REDIS_PORT: get('REDIS_PORT').default(6379).asPortNumber(),
+	
 	// Information about jwt tokens
 	JWT_ALGORITHM: get('JWT_ALGORITHM').default("RS256").asString(),
 	JWT_ACCESS_EXPIRES_IN: get('JWT_ACCESS_EXPIRES_IN').default("20min").asString(),
