@@ -1,4 +1,4 @@
-import { getConfig } from "@src/servicesConfig/configService";
+import { getConfig } from "@src/services/servicesConfig/configService";
 
 // eslint-disable @typescript-eslint/no-magic-numbers
 export const ONE_THOUSAND = 100 as const;

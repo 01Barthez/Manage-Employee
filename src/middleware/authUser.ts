@@ -4,8 +4,8 @@ import exceptions from "../utils/errors/exceptions";
 import { envs } from "../core/config/env";
 import { customRequest } from "../core/interfaces/interfaces";
 import log from "@src/core/config/logger";
-import blackListToken from "@src/functions/blackListToken";
-import fetchAccessToken from "@src/functions/fetchAccessToken";
+import fetchAccessToken from "@src/utils/helpers/fetchAccessToken";
+import blackListToken from "@src/utils/helpers/blackListToken";
 
 const authUser = async (req: customRequest, res: Response, next: NextFunction): Promise<void> => {
     try {

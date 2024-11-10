@@ -1,10 +1,10 @@
 import express from 'express';
 import https from 'https';
-import './servicesConfig/loadData';
-import initMiddlewares from './serverConfig-Middleware.ts/initMiddlewares';
+import './services/servicesConfig/loadData';
 import startJobs from './services/jobs/allJob';
 import { setupSwagger } from './swagger';
-import { credentials } from './serverConfig-Middleware.ts/securityConfig';
+import initMiddlewares from './services/serverConfig-Middleware.ts/initMiddlewares';
+import { credentials } from './services/serverConfig-Middleware.ts/securityConfig';
 
 const app = express();
 

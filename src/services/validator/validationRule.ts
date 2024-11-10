@@ -1,11 +1,11 @@
 import { body, query, ValidationChain } from "express-validator";
 import { RoleUser } from "@prisma/client";
+import { envs } from "@src/core/config/env";
 import {
     MAX_VALID_SALARY,
     MIN_VALID_SALARY,
     passwordRegex
 } from "@src/core/constant";
-import { envs } from "@src/core/config/env";
 
 
 // Validation of user name

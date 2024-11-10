@@ -4,7 +4,7 @@ import multer from "multer";
 
 
 // Gestion globale des erreurs multer
-const handleMulterErrors = (err, req: Request, res: Response, next: NextFunction) => {
+const handleMulterErrors = (err, _req: Request, res: Response, next: NextFunction) => {
     if (err instanceof multer.MulterError) {
         // Gestion des erreurs spécifiques à multer
         switch (err.code) {

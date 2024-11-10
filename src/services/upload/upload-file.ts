@@ -13,10 +13,10 @@ const uploadImage = multer({
         s3: s3,
         bucket: envs.AWS_BUCKET_NAME,
         acl: "private",
-        metadata: (req, file, cb) => {
+        metadata: (_req, file, cb) => {
             cb(null, { fieldName: file.fieldname });
         },
-        key(req, file, callback) {
+        key(_req, file, callback) {
             const uniqueSuffix = `${file.originalname}-${uuidv4()}`;
             callback(null, uniqueSuffix)
         },
@@ -26,7 +26,7 @@ const uploadImage = multer({
         fileSize: 15 * 1024 * 1024 // Set Maxsize of file to to 15Mo
     },
 
-    fileFilter: (req, file, cb) => {
+    fileFilter: (_req, file, cb) => {
         const extension = path.extname(file.originalname).toLowerCase();
         const mimeType = file.mimetype;
 

@@ -1,7 +1,7 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
-import { configCache } from "@src/servicesConfig/configService";
+import { configCache } from "@src/services/servicesConfig/configService";
 import exceptions from "@src/utils/errors/exceptions";
 import ResponseMSG from "@src/utils/responseformat";
 import { Request, Response } from "express";

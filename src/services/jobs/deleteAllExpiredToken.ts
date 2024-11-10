@@ -1,6 +1,6 @@
 import log from '@src/core/config/logger';
-import blackListToken from '@src/functions/blackListToken';
 import throwError from '@src/utils/errors/throwError';
+import blackListToken from '@src/utils/helpers/blackListToken';
 import { CronJob } from 'cron';
 
 const deleteExpiredTokens = new CronJob(

@@ -13,6 +13,8 @@ export type IEmployeeJwt = Employee & { iat?: number; exp?: number };
 export interface customRequest extends Request {
     employee?: Employee;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface IResponse<T = any> {
     success: boolean,
     msg: string,
