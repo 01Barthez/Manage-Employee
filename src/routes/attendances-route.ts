@@ -19,7 +19,7 @@ attendance.post(
 attendance.post(
     ROUTES.ATTENDANCES.CHECK_OUT,
     authUser,
-    validator.DataCheckIN,
+    validator.DataCheckOUT,
     validate,
     attendanceControllers.endOfAttendance
 );

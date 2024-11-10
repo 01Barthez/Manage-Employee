@@ -7,19 +7,21 @@ import redirectURL from '@src/middleware/redirectUrl';
 import disableLogsInProduction from '@src/middleware/disableLog';
 import setupRoutes from './routes-middleware';
 import setupLogging from './logging-middleware';
+// import errorHandler from '@src/middleware/errorHandler';
 
 
 const initMiddlewares = (app: Express): void => {
+    // app.use(errorHandler);
+    
     //? Initialiser les middleware de sécurité de l'application
     setupSecurity(app);
-
+    
     //? gérer le partage des ressources de maniere securisée
     app.use(cors(corsOptions))
-
+    
     //? parser les requetes json
     app.use(express.json());
-
-    
+        
     //? parser les requetes url encoder
     app.use(express.urlencoded({ extended: true }));
 

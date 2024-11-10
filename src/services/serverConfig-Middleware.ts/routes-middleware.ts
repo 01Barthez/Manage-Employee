@@ -8,7 +8,6 @@ import bonus from '@src/routes/achievments-route';
 import achievment from '@src/routes/achievments-route';
 
 
-
 //? program routes
 const setupRoutes = (app: Express): void => {
     app.use(

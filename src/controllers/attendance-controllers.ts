@@ -20,6 +20,7 @@ const attendanceControllers = {
 
             // Check if employee exist and fetch his data
             const employee = await fetchEmployeeFromAuth(req, res);
+            if (!employee) return exceptions.badRequest(res, "Employee not found !");
 
             // Initialise la date
             const today = new Date();
@@ -36,7 +37,7 @@ const attendanceControllers = {
             // Check if employee had ever sign in in this day
             const attendanceExist = await prisma.attendance.findFirst({
                 where: {
-                    employeeID: employee?.employee_id,
+                    employeeID: employee.employee_id,
                     date: dateOfToday
                 }
             })
@@ -65,7 +66,7 @@ const attendanceControllers = {
                 if (abscencesHours !== 0)
                     await px.absence.create({
                         data: {
-                            employeeID: employee?.employee_id || '',
+                            employeeID: employee.employee_id,
                             absenceHours: abscencesHours
                         }
                     })
@@ -73,7 +74,7 @@ const attendanceControllers = {
                 // Save comming Hours
                 await px.attendance.create({
                     data: {
-                        employeeID: employee?.employee_id || '',
+                        employeeID: employee.employee_id,
                         startTime: today,
                         reason,
                         status
@@ -99,6 +100,7 @@ const attendanceControllers = {
 
             // Check if employee exist and fetch his data
             const employee = await fetchEmployeeFromAuth(req, res);
+            if (!employee) return exceptions.badRequest(res, "Employee not found !");
 
             // Initialise date
             const today = new Date()
@@ -108,7 +110,7 @@ const attendanceControllers = {
             // Check if employee had ever signin In the morning 
             const attendance = await prisma.attendance.findFirst({
                 where: {
-                    employeeID: employee?.employee_id,
+                    employeeID: employee.employee_id,
                     date: dateOfToday
                 }
             })
@@ -118,7 +120,7 @@ const attendanceControllers = {
             }
 
             // Check if employee ever recorded the evening 
-            if (employee?.isComeAndBack) return exceptions.conflict(res, "Has ever sign out today...!")
+            if (employee.isComeAndBack) return exceptions.conflict(res, "Has ever sign out today...!")
 
             // Get Coming Hours and Set time of ending time of the day
             const endingHours = roundedTime().hours;
@@ -146,7 +148,7 @@ const attendanceControllers = {
                     // fetch abscences hours of morning
                     const previousAbscence = await px.absence.findFirst({
                         where: {
-                            employeeID: employee?.employee_id,
+                            employeeID: employee.employee_id,
                             date: dateOfToday
                         }
                     });
@@ -163,7 +165,7 @@ const attendanceControllers = {
                             absenceHours: totalAbscenceHours
                         },
                         create: {
-                            employeeID: employee?.employee_id || ``,
+                            employeeID: employee.employee_id,
                             absenceHours: totalAbscenceHours
                         }
                     })
@@ -172,7 +174,7 @@ const attendanceControllers = {
                 // Save the accomplishment of the employee
                 await px.achievment.create({
                     data: {
-                        employeeID: employee?.employee_id || ``,
+                        employeeID: employee.employee_id,
                         message: accomplissement,
                     }
                 })
@@ -193,7 +195,7 @@ const attendanceControllers = {
                 await px.employee.update({
                     where: {
                         deletedAt: null,
-                        employee_id: employee?.employee_id
+                        employee_id: employee.employee_id
                     },
                     data: { isComeAndBack: true }
                 })

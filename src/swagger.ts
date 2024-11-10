@@ -1,7 +1,5 @@
-// Fichier de configuration pour la doc
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-
 import { Express } from 'express';
 import { envs } from './core/config/env';
 
@@ -23,6 +21,7 @@ const swaggerDefinition = {
 			}
 		}
 	},
+
 	servers: [
 		{
 			url: `https://localhost:${envs.PORT}`,
