@@ -1,7 +1,6 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HOURS_OF_WORKS } from "@src/core/constant";
-import throwError from "@src/utils/errors/throwError";
 
 
 const updateStatusEmployee = async () => {
@@ -42,7 +41,7 @@ const updateStatusEmployee = async () => {
 
         log.info('Employee status updated !');
     } catch (error) {
-        throwError('Failed to update employee status', error)
+        throw new Error(`Failed to update employee status ${error}`)
     }
 }
 

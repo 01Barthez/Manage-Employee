@@ -1,4 +1,3 @@
-import throwError from '@src/utils/errors/throwError';
 import otpGenerator from 'otp-generator';
 
 const generateSimpleOTP = (): string | undefined => {
@@ -16,7 +15,7 @@ const generateSimpleOTP = (): string | undefined => {
         // Return a string of number who will be our otp Number
         return otpGenerate;
     } catch (error) {
-        throwError('Failed to generate OTP', error);
+        throw new Error(`Failed to generate OTP: ${error}`);
     }
 }
 

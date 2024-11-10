@@ -1,6 +1,5 @@
 import log from "@src/core/config/logger";
 import { HttpCode } from "@src/core/constant";
-import throwError from "@src/utils/errors/throwError";
 import { 
     NextFunction,
     Request,
@@ -20,7 +19,7 @@ const redirectURL = (req: Request, res: Response, next: NextFunction): void => {
 
         next();
     } catch (error) {
-        throwError(`Failed to redirect URL: http://${req.hostname}${req.url}`, error);
+        throw new Error(`Failed to redirect URL: http://${req.hostname}${req.url}\n: ${error}`);
     }
 }
 

@@ -78,12 +78,12 @@ export const validator = {
     ],
 
     DataCheckOUT: [
-        body('accomplissement')
-            .exists().withMessage('accomplishment is required !')
-            .trim().withMessage('accomplissement can not be empty !')
-            .isString().withMessage('accomplissement have to be a string !')
-            .isLength({ min: 10 }).withMessage('accomplissement is too short; min: 10 !')
-            .isLength({ max: 1000 }).withMessage('accomplissement is too long: max: 1000')
+        body('message')
+            .exists().withMessage('message is required !')
+            .trim().withMessage('message can not be empty !')
+            .isString().withMessage('message have to be a string !')
+            .isLength({ min: 10 }).withMessage('message is too short; min: 10 !')
+            .isLength({ max: 1000 }).withMessage('message is too long: max: 1000')
             .escape()
     ],
 

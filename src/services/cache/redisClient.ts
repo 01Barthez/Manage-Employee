@@ -1,6 +1,5 @@
 import { envs } from '@src/core/config/env';
 import log from '@src/core/config/logger';
-import throwError from '@src/utils/errors/throwError';
 import Redis from 'ioredis'
 
 
@@ -20,7 +19,7 @@ const redis = new Redis({
 
 // Handle error
 redis.on('error', (error) => {
-    throwError("Redis meet some error, verify your network connection: ", error)
+    throw new Error(`Redis meet some error, verify your network connection: ${error}`);
 })
 
 // success connection

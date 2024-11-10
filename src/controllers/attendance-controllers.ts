@@ -96,7 +96,7 @@ const attendanceControllers = {
     //* Saving Comme out Hours
     endOfAttendance: async (req: customRequest, res: Response): Promise<void> => {
         try {
-            const { accomplissement } = req.body as { accomplissement: string };
+            const { message } = req.body as { message: string };
 
             // Check if employee exist and fetch his data
             const employee = await fetchEmployeeFromAuth(req, res);
@@ -175,7 +175,7 @@ const attendanceControllers = {
                 await px.achievment.create({
                     data: {
                         employeeID: employee.employee_id,
-                        message: accomplissement,
+                        message,
                     }
                 })
 

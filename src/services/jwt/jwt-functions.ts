@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken"
 import { envs } from "../../core/config/env";
 import keys from "@src/core/config/key";
 import { Employee } from "@prisma/client";
-import throwError from "@src/utils/errors/throwError";
 import { IEmployeeJwt } from "@src/core/interfaces/interfaces";
 
 const userToken = {
@@ -19,7 +18,7 @@ const userToken = {
         try {
             return jwt.verify(token, keys.jwt.publicKey) as IEmployeeJwt;
         } catch (error) {
-            throwError('Failed to verify access token', error);
+            throw new Error(`Failed to verify access token: ${error}`);
         }
     },
 
@@ -36,7 +35,7 @@ const userToken = {
         try {
             return jwt.verify(refreshToken, keys.jwt.refreshPublicKey) as IEmployeeJwt;
         } catch (error) {
-            throwError('Failed to verify refresh token', error);
+            throw new Error(`Failed to verify refresh token: ${error}`);
         }
     },
 
@@ -44,7 +43,7 @@ const userToken = {
         try {
             return jwt.decode(token) as IEmployeeJwt;
         } catch (error) {
-            throwError(`Failed to decode refresh token`, error);
+            throw new Error(`Failed to decode token: ${error}`);
         }
     },
 };

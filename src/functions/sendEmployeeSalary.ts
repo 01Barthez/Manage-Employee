@@ -1,7 +1,6 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import sendMail from "@src/services/mail/sendMail/send-mail";
-import throwError from "@src/utils/errors/throwError";
 import * as date from 'date-fns'
 import { newSalary, reductionAmount } from "./getUserSalary";
 
@@ -73,7 +72,7 @@ const sendEmployeeSalary = async () => {
         });
         log.info("Tous les employées sont notifiés sur leur salaire de fin du mois !");
     } catch (error) {
-        throwError(`Failed to notified all employee about their salary`, error);
+        throw new Error(`Failed to notified all employee about their salary ${error}`);
     }
 }
 

@@ -1,8 +1,6 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import userToken from "@src/services/jwt/jwt-functions";
-import throwError from "@src/utils/errors/throwError";
-
 
 const blackListToken = {
     AddToblackList: async (token: string) => {
@@ -34,8 +32,7 @@ const blackListToken = {
             log.info(`Token added to blacklist successfully`);
             return true;
         } catch (error) {
-            throwError('Failed to blackList user token', error);
-            return false;
+            throw new Error(`Failed to blackList user token: ${error}`);
         }
     },
 
@@ -54,8 +51,7 @@ const blackListToken = {
 
             return !!isBlackListed;
         } catch (error) {
-            throwError('Failed to check if user token is blackListed', error);
-            return true;
+            throw new Error(`Failed to check if user token is blackListed: ${error}`);
         }
     },
 
@@ -71,7 +67,7 @@ const blackListToken = {
             })
             log.info('expired token successfull deleted !');
         } catch (error) {
-            throwError('Failed to deleted expired token', error);
+            throw new Error(`Failed to deleted expired token: ${error}`);
         }
     }
 }

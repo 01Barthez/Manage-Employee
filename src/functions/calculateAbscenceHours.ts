@@ -1,6 +1,5 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
-import throwError from "@src/utils/errors/throwError";
 import * as date from 'date-fns'
 
 /**
@@ -34,8 +33,7 @@ const calculateAbscenceHours = async (employeeID: string): Promise<number> => {
 
         return totalHours;
     } catch (error) {
-        throwError('Failed to get summary abscences hours of employee', error);
-        return 0;
+        throw new Error(`Failed to get summary abscences hours of employee ${error}`);
     }
 }
 

@@ -1,7 +1,6 @@
 
 import log from '@src/core/config/logger';
 import sendEmployeeSalary from '@src/functions/sendEmployeeSalary';
-import throwError from '@src/utils/errors/throwError';
 import {CronJob} from 'cron';
 
 const notifiedEmployeeSalary = new CronJob (
@@ -11,7 +10,7 @@ const notifiedEmployeeSalary = new CronJob (
             sendEmployeeSalary();
             log.info('Notify employee in process... !');            
         } catch (error) {
-            throwError(`Erreur lors de l'envoi de notification de salaire `, error);
+            throw new Error(`Failed to notify user about their paid: ${error}`);
         }
 	},
 	null, // onComplete

@@ -1,7 +1,6 @@
 import log from '@src/core/config/logger';
 import { holidays } from '@src/core/constant';
 import updateStatusEmployee from '@src/functions/updateEmployeeStatus';
-import throwError from '@src/utils/errors/throwError';
 import {CronJob} from 'cron';
 
 const isHolidays = (): boolean => {
@@ -23,7 +22,7 @@ const updateEmployeeStatus = new CronJob (
 				log.info('ce n\'est pas un Jour férié on mets a jours !');			
 			}
 		} catch (error) {
-			throwError(`Erreur lors de la mise a jor du status des employés`, error)
+            throw new Error(`Fail to update employees status: ${error}`);
 		}
 	},
 	null, // onComplete
