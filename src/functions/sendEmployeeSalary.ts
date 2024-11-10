@@ -12,7 +12,7 @@ const sendEmployeeSalary = async () => {
                 deletedAt: null,
             }
         });
-        if (!allEmployee.length) throwError("Failed to fetch all the employees", "and error occured");
+        if (!allEmployee.length) throwError("Failed to fetch all the employees");
         log.debug("On a recuperer tous les employés !");
 
         // Obtenir les dates de début et de fin du mois précédent

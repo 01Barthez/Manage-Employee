@@ -1,4 +1,3 @@
-
 import compression from 'compression';
 import { Express } from 'express';
 import morgan from 'morgan';

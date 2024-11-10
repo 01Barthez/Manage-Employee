@@ -13,7 +13,7 @@ async function sendMail<K extends keyof typeof templateManager>(
     try {
         const renderTemplate = templateManager[templateName];
         if (!renderTemplate) {
-            throwError('Failed to render template', `Unknown template: ${templateName}`)
+            throwError(`Failed to render template ${templateName}`)
         }
 
         const content = await renderTemplate(templateData);

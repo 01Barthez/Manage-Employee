@@ -1,4 +1,3 @@
-
 import { Express } from 'express';
 import { rateLimitingSubRoute } from './securityConfig';
 import attendance from '@src/routes/attendances-route';
