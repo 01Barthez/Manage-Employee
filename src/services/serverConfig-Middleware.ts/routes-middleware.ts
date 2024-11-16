@@ -3,7 +3,7 @@ import { rateLimitingSubRoute } from './securityConfig';
 import attendance from '@src/routes/attendances-route';
 import abscence from '@src/routes/abscences-route';
 import config from '@src/routes/config-routes';
-import employee from '@src/routes/users-route';
+import employee from '@src/routes/employee-route';
 import bonus from '@src/routes/achievments-route';
 import achievment from '@src/routes/achievments-route';
 

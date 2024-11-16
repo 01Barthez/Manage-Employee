@@ -92,7 +92,7 @@ employee.post(
     validate,
     employeesControllers.changePassword
 );
-
+ 
 //? reset password
 employee.post(
     ROUTES.USER.RESET_PASSSWORD,

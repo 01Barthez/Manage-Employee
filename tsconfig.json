@@ -9,10 +9,10 @@
             "./node_modules/@types"
         ],
         "target": "ESNext", // Spécifie la version ECMAScript cible
-        "module": "NodeNext", // Utilise le système de modules Node.js (ESM)
-        "moduleResolution": "NodeNext", // Résolution des modules pour Node.js (nécessaire avec "module": "NodeNext")
+        "module": "CommonJS", // Utilise le système de modules Node.js (ESM)
+        "moduleResolution": "Node", // Résolution des modules pour Node.js (nécessaire avec "module": "NodeNext")
         "esModuleInterop": true, // Permet d'importer des modules CommonJS avec les importations ES6
-        "skipLibCheck": true, // Ignore la vérification des fichiers .d.ts pour améliorer la vitesse de compilation
+        "skipLibCheck": false, // Ignore la vérification des fichiers .d.ts pour améliorer la vitesse de compilation
         "forceConsistentCasingInFileNames": true, // Enforce un casing cohérent pour les imports
         /* Strict Type-Checking Options */
         "strict": true, // Active toutes les vérifications strictes

@@ -1,18 +1,28 @@
 {
-  "name": "express_js_template_started",
-  "version": "1.1.1",
-  "description": "\"Template pour lancer tout projet express avec de bonnes fondations\"",
-  "main": "index.ts",
-  "repository": "git@github.com:01Barthez/Express-js-Started.git",
+  "name": "worketyamo-employee-management-system",
+  "version": "1.0.0",
+  "description": "🌟 WorketYamo Employee Management System est une solution complète de gestion des ressources humaines conçue pour moderniser et optimiser les processus RH des entreprises de toutes tailles. Ce systeme est conçu pour optimiser le suivi des présences, la gestion des absences et le calcul des salaires en fonctions des abscences. Ce système automatisé et sécurisé aideras donc à améliorer la productivité et à réduire les coûts liés aux absences non justifiées.",
+  "main": "app.ts",
+  "repository": "https://github.com/01Barthez/employee-management",
   "author": "01Barthez <kenwoubarthez@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --respawn --clear --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ./src/app.ts",
+    "dev": "sudo env PATH=\"$PATH\" ts-node-dev --respawn --clear --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ./src/app.ts",
     "build": "rimraf ./dist && tsc",
     "start": "node dist/app.js",
+    "clean:cache": "rimraf .yarn/cache && rimraf node_modules/.cache",
     "generate": "yarn prisma generate",
     "push": "yarn prisma db push",
-    "format": "yarn prisma format"
+    "format": "yarn prisma format",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "lint-staged": {
+    "*.{ts, js}": [
+      "tsc --noEmit",
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "keywords": [
     "Barthez",
