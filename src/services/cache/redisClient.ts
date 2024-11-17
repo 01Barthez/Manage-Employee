@@ -4,9 +4,10 @@ import Redis from 'ioredis'
 
 
 // Create instance of redis
-const redis = new Redis({
+const redisClient = new Redis({
     host: envs.REDIS_HOST,
     port: envs.REDIS_PORT,
+    password: '',
     db: 0,
     lazyConnect: true,
     connectTimeout: 10000,
@@ -18,17 +19,19 @@ const redis = new Redis({
 });
 
 // Handle error
-redis.on('error', (error) => {
+redisClient.on('error', (error) => {
+    log.error(`Error when connecting to redis: ${error}`);
     throw new Error(`Redis meet some error, verify your network connection: ${error}`);
 })
 
 // success connection
-redis.on('connect', ()=> {
+redisClient.on('connect', ()=> {
     log.info('success connection to Redis');
 })
 
-redis.on('reconnecting', (time) => {
+// Status for reconnection to redis
+redisClient.on('reconnecting', (time) => {
     log.warn(`reconnexion to redis in ${time} ms ...`)
 })
 
-export default redis
+export default redisClient

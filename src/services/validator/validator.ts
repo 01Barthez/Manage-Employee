@@ -1,7 +1,19 @@
 import { RoleUser } from "@prisma/client";
 import { envs } from "@src/core/config/env";
-import { MAX_VALID_SALARY, MIN_VALID_SALARY, passwordRegex } from "@src/core/constant";
+import log from "@src/core/config/logger";
+import { loadConfigConstants, MAX_VALID_SALARY, MIN_VALID_SALARY, passwordRegex } from "@src/core/constant";
 import { body, query } from "express-validator";
+ 
+(
+    async () => {
+        await loadConfigConstants();
+        // log.debug(MIN_VALID_SALARY);
+        // log.debug(MAX_VALID_SALARY);
+    }
+)()
+
+log.debug(`Le salaire minimal valid est : ${MIN_VALID_SALARY || 5000}`);
+log.debug(`Le salaire maximum est : ${MAX_VALID_SALARY || 5000000}`);
 
 export const validator = {
     DataInscription: [
@@ -40,7 +52,7 @@ export const validator = {
         body('salary')
             .exists().withMessage('salary is required !')
             .trim()
-            .isInt({ min: MIN_VALID_SALARY, max: MAX_VALID_SALARY }).withMessage('invalid salary !')
+            .isInt({ min: MIN_VALID_SALARY || 5000, max: MAX_VALID_SALARY || 5000000 }).withMessage('invalid salary !')
             .escape()
         ,
 
@@ -104,7 +116,7 @@ export const validator = {
             .optional()
             .trim()
             .notEmpty().withMessage('salary cannot be empty !')
-            .isInt({ min: MIN_VALID_SALARY, max: MAX_VALID_SALARY }).withMessage('invalid salary !')
+            .isInt({ min: MIN_VALID_SALARY || 5000, max: MAX_VALID_SALARY || 5000000 }).withMessage('invalid salary !')
             .escape()
         ,
 
@@ -268,3 +280,4 @@ export const validator = {
         ,
     ]
 }
+

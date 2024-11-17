@@ -79,7 +79,7 @@ const employeesControllers = {
                         expire_at: expireOTP
                     },
                     post,
-                    salary: salary,
+                    salary: Number(salary),
                     role,
                     profileImage: profileUrl
                 }

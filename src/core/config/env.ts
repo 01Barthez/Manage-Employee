@@ -25,6 +25,7 @@ export const envs = {
 	
 	REDIS_HOST: get('REDIS_HOST').default("localhost").asString(),
 	REDIS_PORT: get('REDIS_PORT').default(6379).asPortNumber(),
+	REDIS_PASSWORD: get('REDIS_PASSWORD').default('').asString(),
 	
 	// Information about jwt tokens
 	JWT_ALGORITHM: get('JWT_ALGORITHM').default("RS256").asString(),

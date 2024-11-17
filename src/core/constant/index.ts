@@ -8,40 +8,30 @@ export const allowMimeTypeProfile: string[] = ['image/jpeg', 'image/png'];
 
 export const passwordRegex: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
 
-export const MAX_BEGIN_HOURS = getConfig('max_begin_hours')as number;
-export const MAX_END_HOURS = getConfig('max_end_hours')as number;
-export const HOURS_OF_WORKS = getConfig('hours_of_works')as number;
-export const DAYS_OF_WORKS = getConfig('days_of_works')as number;
-export const SALARY_ROUND_FACTOR = getConfig('salary_round_factor')as number;
-export const MIN_SALARY = getConfig('min_salary')as number;
-export const MIN_VALID_SALARY = getConfig('min_valid_salary') as number;
-export const MAX_VALID_SALARY = getConfig('max_valid_salary') as number;
+export let MAX_BEGIN_HOURS: number;
+export let MAX_END_HOURS: number;
+export let HOURS_OF_WORKS: number;
+export let DAYS_OF_WORKS: number;
+export let SALARY_ROUND_FACTOR: number;
+export let MIN_SALARY: number;
+export let MIN_VALID_SALARY: number;
+export let MAX_VALID_SALARY: number;
+export let holidays: string[];
 
-
-export const holidays = getConfig('hollydays') as string[];
-
-// export const MAX_BEGIN_HOURS = 8;
-// export const MAX_END_HOURS = 20;
-
-// export const HOURS_OF_WORKS = 8;
-// export const DAYS_OF_WORKS = 25;
-
-// export const SALARY_ROUND_FACTOR = 50;
-// export const MIN_SALARY = 5000;
-
-
-// export const holidays = [
-// 	'01-01', // Le 1er janvier
-// 	'02-01', // Le 02 janvier
-// 	'24-12', // Le 24 decembre
-// 	'25-12', // Le 25 decembre 
-// 	'26-12', // Le 26 decembre
-// 	'11-02', // Le 11 fevrier
-// 	'01-05', // Le 20 mai
-// 	'20-05', // Le 20 mai
-// 	'26-12', // Le 26 decembre
-// ]
-
+// Fonction pour charger les constantes une fois
+export const loadConfigConstants = async () => {
+    MAX_BEGIN_HOURS = (await getConfig('max_begin_hours')) || 8 as number;
+    MAX_END_HOURS = (await getConfig('max_end_hours')) || 20 as number;
+    HOURS_OF_WORKS = (await getConfig('hours_of_works')) || 8 as number;
+    DAYS_OF_WORKS = (await getConfig('days_of_works')) || 25 as number;
+    SALARY_ROUND_FACTOR = (await getConfig('salary_round_factor')) || 500 as number;
+    MIN_SALARY = (await getConfig('min_salary')) || 10000 as number;
+    MIN_VALID_SALARY = (await getConfig('min_valid_salary')) || 5000 as number;
+    MAX_VALID_SALARY = (await getConfig('max_valid_salary')) || 5000000 as number;
+    holidays = (await getConfig('hollydays')) || [
+        '01-01', '02-01', '24-12', '25-12', '26-12', '31-12', '11-02', '01-05', '20-05',
+    ] as string[];
+};
 
 export enum HttpCode {
     OK = 200,
