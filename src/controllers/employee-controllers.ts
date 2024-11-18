@@ -24,6 +24,7 @@ import {
     IResendOTP, 
     IUpdateEmployee 
 } from "@src/core/interfaces/interfaces";
+import cacheData from "@src/services/cache/cacheData";
 
 
 const employeesControllers = {
@@ -228,25 +229,32 @@ const employeesControllers = {
                 return exceptions.badRequest(res, "No employeeID provide !");
             }
             log.info("employeeID to consult is provided...");
+        
+            const cashKey = `employee-${employeeID}`;
 
-            // check if employee exist
-            const employee = await prisma.employee.findUnique({
-                where: {
-                    employee_id: employeeID,
-                    deletedAt: null
-                },
-                select: {
-                    name: true,
-                    email: true,
-                    profileImage: true,
-                    post: true,
-                    salary: true
-                }
-            });
+            const employee = await cacheData(cashKey, async() => {
+                const employeeData = await prisma.employee.findUnique({
+                    where: {
+                        employee_id: employeeID,
+                        deletedAt: null
+                    },
+                    select: {
+                        name: true,
+                        email: true,
+                        profileImage: true,
+                        post: true,
+                        salary: true
+                    }
+                });
+
+                return employeeData;
+            }, 1800)
+
             if (!employee) {
                 log.warn(`employee with id: ${employeeID} not exist !`);
                 return exceptions.notFound(res, "employee not exist !");
             }
+           
             log.info("employee exist...");
 
             // Return success message

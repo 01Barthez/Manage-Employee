@@ -1,6 +1,6 @@
 import { KeySetting } from "@prisma/client";
 import prisma from "@src/core/config/prismaClient"
-import redisClient from "../cache/redisClient";
+import {redisClient} from "../cache/redisClient";
 import log from "@src/core/config/logger";
 
 // Charger les configurations dépuis la base données

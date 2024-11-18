@@ -1,13 +1,19 @@
 import { envs } from '@src/core/config/env';
 import log from '@src/core/config/logger';
 import Redis from 'ioredis'
+import { LRUCache } from 'lru-cache'
 
+// setup a local cache
+const localCache = new LRUCache({
+    max: envs.LOCAL_CACHE_MAX_ITEMS || 100,
+    ttl: 60 * 1000 * 2, // 2 minutes
+})
 
 // Create instance of redis
 const redisClient = new Redis({
     host: envs.REDIS_HOST,
     port: envs.REDIS_PORT,
-    password: '',
+    password: envs.REDIS_PASSWORD || undefined,
     db: 0,
     lazyConnect: true,
     connectTimeout: 10000,
@@ -20,18 +26,20 @@ const redisClient = new Redis({
 
 // Handle error
 redisClient.on('error', (error) => {
-    log.error(`Error when connecting to redis: ${error}`);
-    throw new Error(`Redis meet some error, verify your network connection: ${error}`);
+    const msgError = `[Redis] Error when connecting to redis at ${envs.REDIS_HOST}:${envs.REDIS_PORT}: ${error}`;
+
+    log.error(msgError);
+    throw new Error(msgError);
 })
 
 // success connection
 redisClient.on('connect', ()=> {
-    log.info('success connection to Redis');
+    log.info('[Redis] success connection to Redis');
 })
 
 // Status for reconnection to redis
 redisClient.on('reconnecting', (time) => {
-    log.warn(`reconnexion to redis in ${time} ms ...`)
+    log.warn(`[Redis] reconnexion to redis in ${time} ms ...`)
 })
 
-export default redisClient
+export {redisClient, localCache}

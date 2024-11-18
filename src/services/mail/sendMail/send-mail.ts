@@ -28,7 +28,7 @@ async function sendMail<K extends keyof typeof templateManager>(
         // Envoi du message
         await transporter.sendMail(mailOptions)
     } catch (error) {
-        throw new Error(`Failed to send email to new user: ${error}`);
+        throw new Error(`Failed to send mail to user ${receiver}: ${error}`);
     }
 }
 
