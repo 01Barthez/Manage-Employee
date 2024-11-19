@@ -1,7 +1,8 @@
 import { envs } from "@src/core/config/env";
-import { localCache, redisClient } from "./redisClient";
 import log from "@src/core/config/logger";
 import zlib from 'zlib'
+import localCache from "./localCache";
+import redisClient from "./redisClient";
 
 /**
 * generic function to help saving and fetch data from cache redis and lru-cache to optimize performance
@@ -11,7 +12,7 @@ import zlib from 'zlib'
 * @returns Données récupérées depuis le cache ou après exécution de `fetchFn`
 */
 
-type CacheableData = string | number | object;
+type CacheableData = string | number | object | null;
 
 const cacheData = async <T extends CacheableData>(cacheKey: string, fetchFn: () => Promise<T>, ttl: number = 900): Promise<T> => {
     //? Validate input and trow error
@@ -44,8 +45,8 @@ const cacheData = async <T extends CacheableData>(cacheKey: string, fetchFn: () 
                 } else {
                     data = JSON.parse(cachedDataRedis) as T;
                 }
-
-                localCache.set(cacheKey, data); // Updating local cache
+                
+                if (data !== null) localCache.set(cacheKey, data); // Updating local cache
                 return data;
 
             } catch (error) {
@@ -74,7 +75,7 @@ const cacheData = async <T extends CacheableData>(cacheKey: string, fetchFn: () 
             dataToStore = serializedData;
         }
 
-        localCache.set(cacheKey, data);
+        if (data !== null) localCache.set(cacheKey, data); // Updating local cache
         await redisClient.setex(cacheKey, ttl, dataToStore);
 
         log.info(`data fetching, saved in the cache with TTL: ${ttl} and in the localcache under the key: ${cacheKey}...`);

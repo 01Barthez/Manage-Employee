@@ -1,27 +1,109 @@
-
 services:
+  # Set up Application of employee management
   app:
-    build: .
+    build: . # Build the Docker image from the current directory
     image: employee-management
     ports:
       - '4000:3000'
-    env_file:
-      - ./.env
+    secrets:
+      - app_env
     volumes:
       - ./:/app
       - ./logs:/app/logs
     depends_on:
-      - mongo # Change it to "postgres" depent of the using database
-    command: ["yarn", "dev"]
+      - mongo
+      - redis
+      - minio
+    networks:
+      - backend-employee-management
+    command: ['yarn', 'dev']
 
+  # Set up mongo service as employee management dataBase
   mongo:
-    image: mongo:6.0.1 # using image "postgres:15" depent of database
-    ports:
-      - '27017:27017' # '5432:5432'
-    env_file:
-      - ./.env 
+    image: mongo:6.0.8
+    restart: always
+    # ports:
+    #   - '27017:27017'
+    secrets:
+      - app_env
     volumes:
-      - mongo-data:/data/db # 'postgres-data:/var/lib/postgresql/data'
+      - mongo-data:/data/db
+    networks:
+      - backend-employee-management
+    healthcheck:
+      test: ['CMD', 'mongo', '--eval', "db.adminCommand('ping')"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # Set up redis service for caching
+  redis:
+    image: redis:7.4.1-alpine3.20
+    restart: always
+    secrets:
+      - app_env
+    # ports:
+    #   - 6379:6379
+    volumes:
+      - redis-data
+    networks:
+      - backend-employee-management
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # Set up minio service for storing files
+  minio:
+    image: minio/minio
+    restart: always
+    # ports:
+    #   - '9000:9000'
+    #   - '9001:9001'
+    secrets:
+      - app_env
+    volumes:
+      - minio-data:/data-minio
+    networks:
+      - backend-employee-management
+    command: server /data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # Set up nginx service as reverse proxy
+  nginx:
+    image: nginx:1.27.2-alpine-slim
+    restart: always
+    volumes:
+      - ./nginx-config:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
+    ports:
+      - '8080:80'
+    secrets:
+      - app_env
+    networks:
+      - backend-employee-management
+    depends_on:
+      - app
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost']
+      interval: 20s
+      timeout: 10s
+      retries: 3
+
+secrets:
+  app_env:
+    file: .env
 
 volumes:
-  mongo-data: # postgres-data
+  mongo-data:
+  redis-data: 
+  minio-data:
+  nginx-config:
+
+networks:
+  backend-employee-management:

@@ -18,6 +18,8 @@
 
 # Ignore log files
 *.log
+log/
+logs/*
 
 # Ignore temporary files
 *.tmp

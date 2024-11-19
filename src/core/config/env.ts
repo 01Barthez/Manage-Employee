@@ -25,7 +25,8 @@ export const envs = {
 	
 	REDIS_HOST: get('REDIS_HOST').default("localhost").asString(),
 	REDIS_PORT: get('REDIS_PORT').default(6379).asPortNumber(),
-	REDIS_PASSWORD: get('REDIS_PASSWORD').default('').asString(),
+	// REDIS_PASSWORD: get('REDIS_PASSWORD').required().asString(),
+	// REDIS_USERNAME: get('REDIS_USERNAME').default('').asString(),
 	LOCAL_CACHE_MAX_ITEMS: get('LOCAL_CACHE_MAX_ITEMS').default('100').asInt(),
 	COMPRESSION_THRESHOLD: get('COMPRESSION_THRESHOLD').default('1024').asInt(),
 	
@@ -69,4 +70,6 @@ export const envs = {
 	MINIO_ROOT_USER: get('MINIO_ROOT_USER').required().asString(),
 	MINIO_ROOT_PASSWORD: get('MINIO_ROOT_PASSWORD').required().asString(),
 	MIMIO_URL: get('MIMIO_URL').default("http://localhost:9000/").asUrlString(),
+
+	// NGINX_HOST: get('NGINX_HOST').default("foobar.com").asUrlString(),
 };
