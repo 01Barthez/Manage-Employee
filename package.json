@@ -10,7 +10,7 @@
     "dev": "sudo env PATH=\"$PATH\" ts-node-dev --respawn --clear --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ./src/app.ts",
     "build": "rimraf ./dist && tsc",
     "start": "node dist/app.js",
-    "test": "echo \"Warn: no test specified\" && exit 1",
+    "test": "echo \"Warn: no test specified\" && exit 0",
     "clean:cache": "rimraf .yarn/cache && rimraf node_modules/.cache",
     "generate": "yarn prisma generate",
     "push": "yarn prisma db push",
