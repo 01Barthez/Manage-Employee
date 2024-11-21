@@ -2,7 +2,7 @@ services:
   # Set up Application of employee management
   app:
     build: . # Build the Docker image from the current directory
-    image: employee-management
+    image: 01barthez/app-employee-management
     ports:
       - '4000:3000'
     secrets:
