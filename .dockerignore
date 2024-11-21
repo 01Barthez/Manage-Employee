@@ -31,5 +31,4 @@ Thumbs.db
 upload/
 
 # Ignore git Extensions
-*.github
 .git

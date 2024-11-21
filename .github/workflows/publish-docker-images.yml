@@ -1,0 +1,42 @@
+name: CI-CD and Push Docker Image to Registry
+
+on:
+  push:
+    branches: ['main']
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js app
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.12
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: yarn test
+
+      - name: Build the Docker image
+        run: docker-compose up -d --name 01barthez/app-employee-management
+
+      - name: Connect to docker registry
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u 01barthez --password-stdin
+
+      - name: Security scan with Trivy
+        run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image 01barthez/app-employee-management
+
+      - name: 'Push to Docker Hub'
+        run: docker push 01barthez/app-employee-management
+
+      #  ADD STEPS TO DEPLOY HERE
+        
+      - name: 'Success operation'
+        run: echo "Push du docker imae sur le depot 01bartez effectuer avec success... !"

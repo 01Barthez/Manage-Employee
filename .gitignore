@@ -14,9 +14,6 @@ node_modules/
 *.logs/
 logs/
 
-# Ignore github config
-*.github
-
 # Ignore environnements
 .env
 
