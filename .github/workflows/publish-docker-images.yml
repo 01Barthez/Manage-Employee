@@ -25,7 +25,7 @@ jobs:
         run: yarn test
 
       - name: Build the Docker image
-        run: docker-compose up -d --name 01barthez/app-employee-management
+        run: docker compose up -d --name 01barthez/app-employee-management
 
       - name: Connect to docker registry
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u 01barthez --password-stdin
