@@ -1,7 +1,7 @@
 import log from "@src/core/config/logger";
 import prisma from "@src/core/config/prismaClient";
 import { HttpCode } from "@src/core/constant";
-import { configCache } from "@src/services/servicesConfig/configService";
+import redisClient from "@src/services/cache/redisClient";
 import exceptions from "@src/utils/errors/exceptions";
 import ResponseMSG from "@src/utils/responseformat";
 import { Request, Response } from "express";
@@ -21,7 +21,7 @@ const configControllers = {
                 });
 
                 // Mettre à jour la configuration en mémoire
-                configCache[key] = value;
+                redisClient.set(key, value)
 
                 res
                     .status(HttpCode.OK)

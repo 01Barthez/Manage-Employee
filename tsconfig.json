@@ -12,6 +12,7 @@
         "module": "CommonJS", // Utilise le système de modules Node.js (ESM)
         "moduleResolution": "Node", // Résolution des modules pour Node.js (nécessaire avec "module": "NodeNext")
         "esModuleInterop": true, // Permet d'importer des modules CommonJS avec les importations ES6
+        "allowSyntheticDefaultImports": true,
         "skipLibCheck": false, // Ignore la vérification des fichiers .d.ts pour améliorer la vitesse de compilation
         "forceConsistentCasingInFileNames": true, // Enforce un casing cohérent pour les imports
         /* Strict Type-Checking Options */
@@ -37,7 +38,7 @@
         "experimentalDecorators": true, // Active les décorateurs pour TypeScript
         /* Node.js Specific Options */
         "resolveJsonModule": true, // Permet d'importer des fichiers JSON
-        "allowSyntheticDefaultImports": true, // Permet les importations par défaut synthétiques
+
         /* Other Options */
         "noUnusedLocals": true, // Avertit lorsque des variables locales ne sont pas utilisées
         "noUnusedParameters": true, // Avertit lorsque des paramètres de fonction ne sont pas utilisés

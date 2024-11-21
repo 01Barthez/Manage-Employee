@@ -10,6 +10,7 @@
     "dev": "sudo env PATH=\"$PATH\" ts-node-dev --respawn --clear --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ./src/app.ts",
     "build": "rimraf ./dist && tsc",
     "start": "node dist/app.js",
+    "test": "echo \"Warn: no test specified\" && exit 1",
     "clean:cache": "rimraf .yarn/cache && rimraf node_modules/.cache",
     "generate": "yarn prisma generate",
     "push": "yarn prisma db push",
@@ -46,6 +47,7 @@
     "yarn": ">=1.22.19"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "aws-sdk": "^2.1691.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.7.4",
@@ -85,11 +87,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
-    "@prisma/client": "^5.21.1",
     "@types/bcrypt": "^5.0.2",
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
+    "@types/date-fns": "^2.6.3",
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.0",
     "@types/express-rate-limit": "^6.0.0",

@@ -8,7 +8,7 @@ export const envs = {
 	PORT2: get('PORT2').default(3000).asPortNumber(),
 	
 	API_PREFIX: get('DEFAULT_API_PREFIX').default('/api/v1').asString(),
-
+ 
 	NODE_ENV: get('NODE_ENV').default('development').asString(),
 	// Set Ratelimi params for App
 	MAX_GLOBAL_QUERY_NUMBER: get('MAX_GLOBAL_QUERY_NUMBER').default('100').asInt(),

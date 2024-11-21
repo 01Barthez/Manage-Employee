@@ -288,13 +288,7 @@ const employeesControllers = {
                 take: Number(limit),
                 skip: (Number(page) - 1) * Number(limit),
             });
-
-            if (!employees.length) {
-                log.warn(`Failed to fetch all employee !`);
-                return exceptions.notFound(res, "failed to fetch all employees !");
-            }
-            log.info("fetching employees...");
-
+ 
             // Return success message
             log.info("all employee successfully fetch !")
             res
