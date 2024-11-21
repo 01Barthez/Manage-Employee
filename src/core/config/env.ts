@@ -55,7 +55,7 @@ export const envs = {
 	MAX_LIMIT_DATA: get('MAX_LIMIT_DATA').default(100).asInt(),
 	
 	// # configuration of mail sender
-	MAIL_HOST: get('MAIL_HOST').default("gmail").asString(),
+	MAIL_HOST: get('MAIL_HOST').default("smtp.gmail.com").asString(),
 	MAIL_ADDRESS: get('MAIL_ADDRESS').required().asString(),
 	MAIL_PASSWORD: get('MAIL_PASSWORD').required().asString(),
 	MAIL_PORT: get('MAIL_PORT').default(465).asPortNumber(),

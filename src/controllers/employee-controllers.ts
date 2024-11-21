@@ -288,7 +288,7 @@ const employeesControllers = {
                 take: Number(limit),
                 skip: (Number(page) - 1) * Number(limit),
             });
- 
+  
             // Return success message
             log.info("all employee successfully fetch !")
             res
